@@ -1,0 +1,11 @@
+
+
+.container{
+    display: flex;
+    flex: 1;
+    justify-Content: 'center';
+    align-items: 'center';
+    background-color: rebeccapurple;
+
+}
+
