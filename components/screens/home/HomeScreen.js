@@ -1,39 +1,223 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Button, Modal, Dimensions, ScrollView, FlatList, Switch } from 'react-native';
+import { View, Text, StyleSheet, Button, Modal, Dimensions, ScrollView, FlatList, Switch, Image, TouchableOpacity } from 'react-native';
 import CircularProgress from 'react-native-circular-progress-indicator';
 import Checkbox from 'expo-checkbox';
 import { Ionicons } from '@expo/vector-icons';
 import * as Font from 'expo-font';
 
+const blobStorageBaseUrl = 'https://pry20231020fnb6cf.blob.core.windows.net/';
+const containerName = 'pry20231020-dataset-ml';
+const blobName = '1.jpg';
+
+const imageUrl = `${blobStorageBaseUrl}${containerName}/${blobName}`;
+
 const { width } = Dimensions.get('window');
 const windowWidth = Dimensions.get('window').width;
 
-const HomeScreen = () => {
-  const breakfastData = [
-    { id: '1', name: 'Leche', calories: 100, grams: 200, selected: false },
-    { id: '2', name: 'Fruit Salad', calories: 20, grams: 200, selected: false },
-    { id: '3', name: 'Eggs and Toast', calories: 50, grams: 200, selected: false },
-    { id: '4', name: 'Eggs and Toast', calories: 180, grams: 200, selected: false },
-  ];
 
-  const lunchData = [
-    { id: '8', name: 'Lentejas', calories: 100, grams: 200, selected: false },
-    { id: '9', name: 'Vegetable Stir-Fry', calories: 100, grams: 200, selected: false },
-    { id: '10', name: 'Quinoa Bowl', calories: 100, grams: 200, selected: false },
-    { id: '11', name: 'Quinoa Bowl', calories: 100, grams: 200, selected: false },
-  ];
+const HomeScreen = ({ route }) => {
+ // const { userToken, userName, personId } = route.params;
+ const { dataPerson } = route.params; // Obtener el objeto 'data' de los parámetros
 
-  const dinnerData = [
-    { id: '11', name: 'Salmon with Roasted Vegetables', calories: 100, grams: 200, selected: false },
-    { id: '12', name: 'Pasta Primavera', calories: 100, grams: 200, selected: false },
-    { id: '13', name: 'Steak and Sweet Potato Mash', calories: 100, grams: 200, selected: false },
-  ];
+  // Acceder a las propiedades del objeto 'data'
+  const personId = dataPerson.id_person;
+  const userName = dataPerson.user_name;
+  const userToken = dataPerson.token;
+  console.log ("****personId *******: ", personId)
+  console.log ("****userName *******: ", userName)
 
+
+  const [selectedMeal, setSelectedMeal] = useState(null);
+  const [modalIngredientesVisible, setModalIngredientesVisible] = useState(false);
+  const [currentDay, setCurrentDay] = useState('');
+  const [data, setData] = useState([]);
+
+
+  const [dataBreakfast, setDataBreakfast] = useState([]);
+  const [dataLunch, setDataLunch] = useState([]);
+  const [dataDinner, setDataDinner] = useState([]);
+
+  const [breakfastSelected, setBreakfastSelected] = useState(false);
+  const [lunchSelected, setLunchSelected] = useState(false);
+  const [dinnerSelected, setDinnerSelected] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedOption, setSelectedOption] = useState('');
   const [selectedMealType, setSelectedMealType] = useState('');
   const [selectedMeals, setSelectedMeals] = useState([]);
   const [fontsLoaded, setFontsLoaded] = useState(false);
+  const [selectedBreakfast, setSelectedBreakfast] = useState([]);
+  const [selectedLunch, setSelectedLunch] = useState([]);
+  const [selectedDinner, setSelectedDinner] = useState([]);
+
+
+  const isMealSelected = (mealType, item) => {
+    return selectedMeals.some(
+      (meal) => meal.id === item.id && meal.mealType === mealType
+    );
+  };
+
+
+  //const connString = "dbname='postgres' user='pry20231020admin' host='pry20231020-db.postgres.database.azure.com' port='5432' password='P123456789**' sslmode='require'";
+
+
+  const breakfastOptions = [
+    { id: 1, name: 'Jugos' },
+    { id: 2, name: 'Lácteos' },
+    { id: 3, name: 'Harinas' },
+    { id: 4, name: 'Bebidas Calientes' },
+  ];
+
+  const lunchOptions = [
+    { id: 1, name: 'Pescados y Mariscos' },
+    { id: 2, name: 'Carnes' },
+    { id: 3, name: 'Menestras' },
+    { id: 4, name: 'Pastas' },
+    { id: 5, name: 'Arroces' },
+    { id: 6, name: 'Sopas y Caldos' },
+    { id: 7, name: 'Pollos' },
+  ];
+
+  const dinnerOptions = [
+    { id: 1, name: 'Sopas y Caldos' },
+    { id: 2, name: 'Pollo' },
+    { id: 3, name: 'Carnes' },
+    { id: 4, name: 'Pastas' },
+    { id: 5, name: 'Arroces' },
+    { id: 6, name: 'Lácteos' },
+    { id: 7, name: 'Harinas' },
+    { id: 8, name: 'Bebidas Calientes' },
+  ];
+
+  const mostrarModalIngredientes = (meal) => {
+    setSelectedMeal(meal);
+    setModalIngredientesVisible(true);
+  };
+
+  const ocultarModalIngredientes = () => {
+    setSelectedMeal(null);
+    setModalIngredientesVisible(false);
+  };
+
+  const renderIngredientes = () => {
+    if (!selectedMeal) return null;
+
+    return (
+      <Modal visible={modalIngredientesVisible} animationType="slide">
+        <View style={styles.modalContainer}>
+          <Text style={[styles.modalTitle, { color: '#FFA500', fontSize: 20, fontWeight: 'bold' }]}>
+            {selectedMeal.name}
+          </Text>
+          {/* Agregar aquí la imagen de la comida */}
+          <Image
+            source={{ uri: imageUrl }} // Reemplazar 'URL_DE_LA_IMAGEN' con la URL de la imagen de la comida
+            style={{ width: 150, height: 150, borderRadius: 75, marginBottom: 16 }}
+          />
+          <Text style={[styles.subHeading, { color: '#FFA500', fontSize: 18 }]}>Ingredientes:</Text>
+          {selectedMeal.ingredients && selectedMeal.ingredients.length > 0 ? (
+            <FlatList
+              data={selectedMeal.ingredients}
+              renderItem={({ item }) => (
+                <View style={styles.ingredientContainer}>
+                  <Text style={styles.ingredientName}>{item.ingredient_name}</Text>
+                  <Text style={styles.ingredientDetail}>
+                    Cantidad: {item.ingredient_weight} g | Calorías: {item.ingredient_calories}
+                  </Text>
+                </View>
+              )}
+              keyExtractor={(item) => item.ingredient_name}
+              contentContainerStyle={styles.flatlistContentContainer}
+            />
+          ) : (
+            <Text style={{ color: '#FFA500' }}>No hay ingredientes disponibles.</Text>
+          )}
+          <TouchableOpacity
+            style={styles.closeButton}
+            onPress={ocultarModalIngredientes}
+          >
+            <Text style={styles.closeButtonText}>Cerrar</Text>
+          </TouchableOpacity>
+        </View>
+      </Modal>
+    );
+  };
+
+
+
+
+
+  const breakfastDataFromAPI2 = [
+    {
+      ingredient_name: 'Arroz blanco corriente',
+      ingredient_weight: 53.0,
+      ingredient_calories: 188.6,
+    },
+    {
+      ingredient_name: 'Pollo, carne pulpa',
+      ingredient_weight: 105.0,
+      ingredient_calories: 125.4,
+    },
+    // Agrega más ingredientes según sea necesario
+  ];
+
+  const lunchDataFromAPI = [
+    {
+      ingredient_name: 'Arroz blanco corriente',
+      ingredient_weight: 53.0,
+      ingredient_calories: 188.6,
+    },
+    {
+      ingredient_name: 'Pollo, carne pulpa',
+      ingredient_weight: 105.0,
+      ingredient_calories: 125.4,
+    },
+    // Agrega más ingredientes según sea necesario
+  ];
+
+  const breakfastData = dataBreakfast
+    ? [
+      {
+        //id: dataBreakfast.id_meal,
+        id: 1,
+        mealType: "Desayuno",
+        name: dataBreakfast.healthy_equivalent_name,
+        calories: dataBreakfast.calories_meal_type,
+        ingredients: dataBreakfast.ingredients,
+        selected: false,
+      },
+    ]
+    : [];
+
+  const lunchData = dataLunch
+    ? [
+      {
+        id: 2,
+        //id: dataLunch.id_meal,
+        mealType: "Almuerzo",
+
+        name: dataLunch.healthy_equivalent_name,
+        calories: dataLunch.calories_meal_type,
+        ingredients: dataLunch.ingredients,
+        selected: false,
+      },
+    ]
+    : [];
+
+  const dinnerData = dataDinner
+    ? [
+      {
+        id: 3,
+        //id: dataDinner.id_meal,
+        mealType: "Cena",
+
+        name: dataDinner.healthy_equivalent_name,
+        calories: dataDinner.calories_meal_type,
+        ingredients: dataDinner.ingredients,
+        selected: false,
+      },
+    ]
+    : [];
+
+
 
   useEffect(() => {
     const loadFonts = async () => {
@@ -44,50 +228,95 @@ const HomeScreen = () => {
     };
 
     loadFonts();
+    const currentDate = new Date();
+    const dayOfWeek = currentDate.getDay();
+    const days = ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'];
+    const currentDayName = days[dayOfWeek];
+
+    setCurrentDay(currentDayName);
+    //handleOptionSelect('Desayuno', 1)
+
+
   }, []);
 
   const handleReload = (mealType) => {
     setSelectedOption('');
     setSelectedMealType(mealType);
-    setModalVisible(true);
+    setModalVisible((prevState) => ({ ...prevState, [mealType]: true }));
   };
 
-  const handleOptionSelect = (option) => {
-    setSelectedOption(option);
-    setModalVisible(false);
-  
+
+
+  const handleOptionSelect = (mealType, group_id) => {
+
+    console.log(`mealType: ${mealType}`);
+    console.log(`group_id: ${group_id}`);
+    console.log("Dia de la semana " + currentDay)
+    setSelectedOption(group_id);
+    setModalVisible((prevState) => ({ ...prevState, [mealType]: false }));
+
+    //console.log ("id_person+++++" + id_person)
+
     const datos = {
-      name: "Teresa",
-      user_name: "Teresa123",
-      password: "qwe",
-      birth_date: "1997-02-15",
-      gender: "F",
-      height: 168,
-      weight: 85.3,
-      activity_level: 1
+      dia: "Lunes",// currentDay
+      comida_del_dia: mealType,//"Desayuno",//--
+      grupo_comida: group_id,
+      user_name: userName,
+      person_id: personId,
+      token: "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJwZXJzb25pZCI6OCwidXN1YXJpbyI6InRpdCIsInJvbCI6ImFkbWluaXN0cmFkb3IifQ.CEZwB8CYTiQs4gb3DSWyZjmahYkt0hZOvNROw5tVGRqWKuzTMq9HWZbNG1ipnGZD1ESCHlcv1gtOT_bDvpPR77BvrAa5nyPx6zwSmTPcf708YusnGQdX_q6mJgFSmwjyElL8kMioIqvRGv9Sg1b6igZlahCkZ3p7oRtq5Oj5AwgfVwpRvHhbkD9LjWGbMmevQ3E-04IQEqMgbc_OrTj86flB1zuIIuGMwJ8ZpdQA6sl5SoDBOkiS7S8OfFyk1caWyPCE5a7bkNNHKmnr7mExPE4nu1VLftyQsmAmKj9GwnifO_lmYS81tN4jwyqIBL3RJn0Di-ZX5_a7bGt6QXx3BQ"
     };
-  
-    fetch('https://pry20231020-fn.azurewebsites.net/api/registro?sKB1vrW_2Zx4HC0xuAeLZI-mTpe4LAX4c_DtfhoPBwP7AzFuyH2P_g==', {
+
+    fetch('https://pry20231020-fn.azurewebsites.net/api/HttpTrigger1', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json', // Cambio 'application/x-www-form-urlencoded' a 'application/json'
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify(datos),
     })
-    .then(function (response) {
-      if (!response.ok) {
-        throw new Error('Error en la solicitud. Código de estado: ' + response.status);
-      }
-      return response.text(); // Usamos response.text() para obtener la respuesta como un string
-    })
-    .then(function (data) {
-      console.log('data =', data); // 'data' será el string de la respuesta
-      // Aquí puedes procesar los datos de la respuesta si es necesario
-    })
-    .catch(function (error) {
-      console.error('Error al obtener la respuesta:', error);
-    });
+      .then(function (response) {
+        if (!response.ok) {
+          throw new Error('Error en la solicitud. Código de estado: ' + response.status);
+        }
+        return response.json(); // Parseamos la respuesta como JSON
+      })
+      .then(function (data) {
+
+        // Utilizamos los datos recibidos de la API aquí
+        const ingredientNames = data.ingredients.map((ingredient) => ingredient.ingredient_name);
+        console.log("+++++data" + JSON.stringify(data));
+        console.log("data" + ingredientNames)
+        switch (mealType) {
+          case 'Desayuno':
+            setDataBreakfast(data || []);
+            //setDataBreakfastIngredients(data.ingredients);
+            break;
+          case 'Almuerzo':
+            setDataLunch(data || []);
+            //setDataLunchIngredients(data.ingredients);
+            break;
+          case 'Cena':
+            setDataDinner(data || []);
+            //setDataDinnerIngredients(data.ingredients);
+            break;
+          default:
+            break;
+        }
+
+        setData(data);
+
+        const selectedMealData = {
+          name: data.healthy_equivalent_name,
+          ingredients: data.ingredients,
+        };
+
+        setSelectedMeal(selectedMealData);
+      })
+      .catch(function (error) {
+        console.error('Error al obtener la respuesta:', error);
+      });
+
   };
+
   
 
   const handleCheckboxToggle = (meal) => {
@@ -103,19 +332,73 @@ const HomeScreen = () => {
     setSelectedMeals(updatedMeals);
   };
 
-  const renderMealItem = ({ item }) => {
+ /* const handleCheckboxToggle = (meal) => {
+    // Determine the current meal type (Desayuno, Almuerzo, or Cena)
+    const mealType = meal.mealType;
+
+    switch (mealType) {
+      case 'Desayuno':
+        setSelectedBreakfast((prevSelected) => {
+          const mealIndex = prevSelected.findIndex((item) => item.id === meal.id);
+          if (mealIndex === -1) {
+            return [...prevSelected, meal];
+          } else {
+            const updatedSelected = [...prevSelected];
+            updatedSelected.splice(mealIndex, 1);
+            return updatedSelected;
+          }
+        });
+        break;
+      case 'Almuerzo':
+        setSelectedLunch((prevSelected) => {
+          const mealIndex = prevSelected.findIndex((item) => item.id === meal.id);
+          if (mealIndex === -1) {
+            return [...prevSelected, meal];
+          } else {
+            const updatedSelected = [...prevSelected];
+            updatedSelected.splice(mealIndex, 1);
+            return updatedSelected;
+          }
+        });
+        break;
+      case 'Cena':
+        setSelectedDinner((prevSelected) => {
+          const mealIndex = prevSelected.findIndex((item) => item.id === meal.id);
+          if (mealIndex === -1) {
+            return [...prevSelected, meal];
+          } else {
+            const updatedSelected = [...prevSelected];
+            updatedSelected.splice(mealIndex, 1);
+            return updatedSelected;
+          }
+        });
+        break;
+      default:
+        break;
+    }
+  };*/
+
+
+  const renderMealItem = ({ item }, mealType) => {
+    const isSelected = isMealSelected(mealType, item);
+
     return (
       <View style={styles.mealItem}>
         <View style={styles.mealItemContent}>
           <View style={styles.leftColumn}>
             <Text style={styles.mealName}>{item.name}</Text>
             <Text style={styles.mealInfo}>{item.calories} kcal</Text>
-            <Text style={styles.mealInfo}>{item.grams} g</Text>
           </View>
           <View style={styles.switchContainer}>
-            <Switch
+          <Switch
               value={selectedMeals.some((meal) => meal.id === item.id)}
               onValueChange={() => handleCheckboxToggle(item)}
+            />
+            <Ionicons
+              name="add-circle-outline" // Cambio de "md-more" a "add-circle-outline"
+              size={24}
+              color="#FFA500"
+              onPress={() => mostrarModalIngredientes(item)}
             />
           </View>
         </View>
@@ -123,25 +406,40 @@ const HomeScreen = () => {
     );
   };
 
-  const renderCategory = (mealType, data) => {
+  const renderCategory = (mealType, data, options) => {
+
+
     return (
       <View style={styles.categoryContainer}>
         <View style={styles.categoryHeader}>
           <Text style={styles.subHeading}>{mealType}</Text>
           <Ionicons name="md-refresh" size={24} color="#FFA500" onPress={() => handleReload(mealType)} />
-
         </View>
         <ScrollView horizontal>
           <FlatList data={data} renderItem={renderMealItem} keyExtractor={(item) => item.id} />
         </ScrollView>
+
+        {/* Modal */}
+        <Modal visible={modalVisible[mealType] || false} animationType="slide">
+          <View style={styles.modalContainer}>
+            <Text style={styles.modalTitle}>Seleccione una opción</Text>
+            {options.map((option) => (
+              <Button key={option.id} title={option.name} onPress={() => handleOptionSelect(mealType, option.id)} />
+            ))}
+            <Button title="Cancelar" onPress={() => setModalVisible((prevState) => ({ ...prevState, [mealType]: false }))} />
+
+          </View>
+        </Modal>
       </View>
     );
   };
 
+
   if (!fontsLoaded) {
     // Muestra un indicador de carga o una pantalla de carga mientras se cargan las fuentes
     return null;
-  }
+  };
+
 
   return (
     <View style={styles.container}>
@@ -151,7 +449,7 @@ const HomeScreen = () => {
         <View style={styles.progressContainer}>
           <CircularProgress
             value={selectedMeals.reduce((total, meal) => total + meal.calories, 0)}
-            maxValue={1800}
+            maxValue={2170}
             radius={80}
             duration={2000}
             progressValueColor={'#FFA500'}
@@ -164,24 +462,16 @@ const HomeScreen = () => {
           />
 
           <Text style={styles.progressText}>
-            {selectedMeals.reduce((total, meal) => total + meal.calories, 0)}/1800 kcal
+            {selectedMeals.reduce((total, meal) => total + meal.calories, 0)}/{} kcal
           </Text>
         </View>
+        {renderIngredientes()}
 
-        {renderCategory('Desayuno', breakfastData)}
-        {renderCategory('Almuerzo', lunchData)}
-        {renderCategory('Cena', dinnerData)}
+        {renderCategory('Desayuno', breakfastData, breakfastOptions)}
+        {renderCategory('Almuerzo', lunchData, lunchOptions)}
+        {renderCategory('Cena', dinnerData, dinnerOptions)}
 
-        <Modal visible={modalVisible} animationType="slide">
-          <View style={styles.modalContainer}>
-            <Text style={styles.modalTitle}>Seleccione una opción</Text>
-            <Button title="Menetras" onPress={() => handleOptionSelect('Menetras')} />
-            <Button title="Mariscos" onPress={() => handleOptionSelect('Mariscos')} />
-            <Button title="Pescado" onPress={() => handleOptionSelect('Pescado')} />
-            <Button title="Pastas" onPress={() => handleOptionSelect('Pastas')} />
-            {/* Agrega más opciones según sea necesario */}
-          </View>
-        </Modal>
+
       </ScrollView>
     </View>
   );
@@ -261,11 +551,48 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#FFFFFF',
     paddingHorizontal: 16,
+    paddingTop: 32,
+    paddingBottom: 16,
   },
   modalTitle: {
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 16,
+  },
+  subHeading: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 8,
+  },
+  ingredientContainer: {
+    marginBottom: 16,
+  },
+  ingredientName: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#FFA500',
+    marginBottom: 8,
+  },
+  ingredientDetail: {
+    color: '#FFA500',
+    textAlign: 'center',
+  },
+  flatlistContentContainer: {
+    flexGrow: 1,
+    justifyContent: 'center',
+    paddingHorizontal: 16,
+  },
+  closeButton: {
+    backgroundColor: '#FFA500',
+    borderRadius: 20,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    marginTop: 20,
+  },
+  closeButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
 });
 

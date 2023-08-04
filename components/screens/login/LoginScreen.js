@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { View, TextInput, TouchableOpacity, Text, StyleSheet } from 'react-native';
 
 
-const LoginScreen = ({ navigation }) => {
+const LoginScreen = ({ navigation, isAuthenticated, setIsAuthenticated , route,onLoginSuccess }) => {
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -10,9 +11,9 @@ const LoginScreen = ({ navigation }) => {
     const datos = {
       user_name: email,
       password: password
+
     };
 
-    // Realizar la solicitud POST a la API
     fetch('https://pry20231020-fn.azurewebsites.net/api/login', {
       method: 'POST',
       headers: {
@@ -24,22 +25,26 @@ const LoginScreen = ({ navigation }) => {
       if (!response.ok) {
         throw new Error('Error en la solicitud. Código de estado: ' + response.status);
       }
-      return response.text(); // Usamos response.text() para obtener la respuesta como un string
+      return response.json(); // Usamos response.json() para obtener la respuesta como un objeto JavaScript
     })
     .then(function (data) {
-      console.log('data =', data); // 'data' será el string de la respuesta
-      const jsonData = JSON.stringify(data); // Convertir el texto a objeto JSON
-      const id_person = jsonData.idPerson;
-      const user_name = jsonData.user_name;
-      const token = jsonData.token;
-      console.log('jsonData =', jsonData + token + user_name + id_person ); // 'data' será el string de la respuesta
-      if (token && user_name && id_person) {
-        navigation.navigate('Inicio', {
-          token,
-          userData: { user_name, id_person },
-        });
+      console.log('data =', data); 
+
+      const id_person = data.id_person;
+      const user_name = data.user_name;
+      const user_token = data.token;
+      console.log("Login screen", user_token + "  - " + user_name + " -  " +id_person ); // 'data' será el string de la respuesta
+      if (user_token && user_name && id_person) {
+        setIsAuthenticated(true); // Utiliza directamente setIsAuthenticated
+        onLoginSuccess(data);
+
+       //navigation.replace('Home', { user_token: user_token, user_name: user_name, id_person: id_person });
+       navigation.replace('Home', { dataPerson: data }); // Pasar el objeto 'data' como parámetro
+
+
+
+
       } else {
-        // Aquí puedes mostrar un mensaje de error si la solicitud no fue exitosa
         console.log('Error en la solicitud de inicio de sesión');
       }
     })

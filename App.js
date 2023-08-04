@@ -16,41 +16,47 @@ import ProfileScreen from './components/screens/profile/ProfileScreen';
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
-const HomeStack = () => (
-  <Stack.Navigator>
-    <Stack.Screen name="Home" component={HomeScreen} />
-  </Stack.Navigator>
-);
 
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  useEffect(() => {
-    // Check if user is authenticated, e.g., through authentication token
-    const checkAuthentication = () => {
-      // Simulating authentication check
-      setTimeout(() => {
-        setIsAuthenticated(true);
-      }, 30000);
-    };
+  const user_token = 'valor_del_token'; // Reemplaza 'valor_del_token' con el token real
+  const user_name = 'valor_del_user_name'; // Reemplaza 'valor_del_user_name' con el nombre de usuario real
+  const id_person = '10'; // Reemplaza 'valor_del_id_person' con el id de la persona real
 
-    checkAuthentication();
-  }, []);
+  const [userToken, setUserToken] = useState('');
+  const [userName, setUserName] = useState('');
+  const [personId, setPersonId] = useState('');
+
+  const handleLoginSuccess2 = (token, name, id) => {
+    setIsAuthenticated(true);
+    setUserToken(token);
+    setUserName(name);
+    setPersonId(id);
+  };
+
+  const [dataPerson, setDataPerson] = useState({});
+
+  const handleLoginSuccess = (data) => {
+    setIsAuthenticated(true);
+    setDataPerson(data);
+    
+  };
 
   return (
     <View style={styles.container}>
       <NavigationContainer>
         {isAuthenticated ? (
-          <Tab.Navigator
-          screenOptions={({ route }) => ({
-            tabBarActiveTintColor: '#FFA500',
-            tabBarStyle: {
-              display: 'flex',
-            },
+          <Tab.Navigator name='MainTab'
+            screenOptions={({ route }) => ({
+              tabBarActiveTintColor: '#FFA500',
+              tabBarStyle: {
+                display: 'flex',
+              },
               tabBarIcon: ({ color, size }) => {
                 let iconName;
 
-                if (route.name === 'Inicio') {
+                if (route.name === 'Home') {
                   iconName = 'home';
                 } else if (route.name === 'Progreso') {
                   iconName = 'bar-chart';
@@ -65,18 +71,36 @@ const App = () => {
                 );
               },
             })}
-           
+
 
           >
-            <Tab.Screen name="Inicio" component={HomeScreen} />
+            <Tab.Screen name="Home" component={HomeScreen} initialParams={{ dataPerson }} />
+
+
+            {/* <Tab.Screen name="Home" component={HomeScreen} />*/}
+
             <Tab.Screen name="Progreso" component={ProgressScreen} />
             <Tab.Screen name="Notificaciones" component={NotificationsScreen} />
             <Tab.Screen name="Perfil" component={ProfileScreen} />
           </Tab.Navigator>
         ) : (
           <Stack.Navigator>
-            <Stack.Screen name="Login" component={LoginScreen} />
-            <Stack.Screen name="Register" component={RegisterScreen} />
+            <Stack.Screen name="Login">
+              {(props) => (
+                <LoginScreen {...props} isAuthenticated={isAuthenticated} setIsAuthenticated={setIsAuthenticated} {...props} onLoginSuccess={handleLoginSuccess}/>
+                
+              )}
+            </Stack.Screen>
+            <Stack.Screen name="Registro" component={RegisterScreen} />
+            <Stack.Screen
+              name="Home"
+              component={HomeScreen}
+              initialParams={{
+                dataPerson:'',
+
+          
+              }}
+            />
           </Stack.Navigator>
         )}
       </NavigationContainer>
