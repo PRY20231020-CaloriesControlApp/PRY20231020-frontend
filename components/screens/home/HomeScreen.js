@@ -602,7 +602,7 @@ const HomeScreen = ({ route }) => {
             radius={80}
             duration={2000}
             progressValueColor={'#FFA500'}
-            title={'Kcal'}
+            title={'kcal'}
             titleColor={'#FFA500'}
             titleStyle={{ fontWeight: 'bold' }}
             textStyle={{ fontWeight: 'bold' }}

@@ -42,6 +42,8 @@ const LoginScreen = ({ navigation, isAuthenticated, setIsAuthenticated , route,o
        //navigation.replace('Home', { user_token: user_token, user_name: user_name, id_person: id_person });
        navigation.replace('Home', { dataPerson: data }); // Pasar el objeto 'data' como parámetro
        navigation.replace('Perfil', { dataPerson: data }); // Pasar el objeto 'data' como parámetro
+       navigation.replace('Progreso', { dataPerson: data }); // Pasar el objeto 'data' como parámetro
+
 
 
 

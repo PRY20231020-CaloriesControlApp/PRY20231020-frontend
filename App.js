@@ -78,7 +78,7 @@ const App = () => {
             <Tab.Screen name="Home" component={HomeScreen} initialParams={{ dataPerson }} />
             {/* <Tab.Screen name="Home" component={HomeScreen} />*/}
 
-            <Tab.Screen name="Progreso" component={ProgressScreen} />
+            <Tab.Screen name="Progreso" component={ProgressScreen} initialParams={{ dataPerson }}/>
             <Tab.Screen name="Notificaciones" component={NotificationsScreen} />
             <Tab.Screen name="Perfil" component={ProfileScreen} initialParams={{ dataPerson }}/>
           </Tab.Navigator>
@@ -93,6 +93,8 @@ const App = () => {
             <Stack.Screen name="Registro" component={RegisterScreen} />
             <Stack.Screen name="Home" component={HomeScreen} initialParams={{dataPerson:'',}}/>
             <Stack.Screen name="Perfil" component={ProfileScreen} initialParams={{dataPerson:'',}}/>
+            <Stack.Screen name="Progreso" component={ProgressScreen} initialParams={{dataPerson:'',}}/>
+
 
           </Stack.Navigator>
         )}

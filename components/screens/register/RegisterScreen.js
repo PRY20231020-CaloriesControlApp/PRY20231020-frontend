@@ -51,6 +51,8 @@ const RegisterScreen = ({ navigation }) => {
           console.log("+++++data" + JSON.stringify(data));
           //navigation.navigate('HomeScreen');
           navigation.replace('Home', { dataPerson: data });
+          navigation.replace('Perfil', { dataPerson: data }); // Pasar el objeto 'data' como parámetro
+          navigation.replace('Progreso', { dataPerson: data }); // Pasar el objeto 'data' como parámetro
 
         })
         .catch(function (error) {
