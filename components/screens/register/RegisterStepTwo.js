@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, TextInput, TouchableOpacity, Text, StyleSheet, Alert } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 
-const RegisterStepTwo = ({ onNext, onPrevious }) => {
+const RegisterStepTwo = ({ onNext, onPrevious, formData, setFormData }) => {
   const [birthdate, setBirthdate] = useState('');
   const [gender, setGender] = useState('');
   const [height, setHeight] = useState('');
@@ -33,8 +33,10 @@ const RegisterStepTwo = ({ onNext, onPrevious }) => {
           <TextInput
             //placeholder="Fecha de Nacimiento"
             style={styles.input}
-            value={birthdate}
-            onChangeText={setBirthdate}
+            //value={birthdate}
+            //onChangeText={setBirthdate}
+            value={formData.birth_date}
+            onChangeText={(value) => setFormData({ ...formData, birth_date: value })}
           />
         </View>
 
@@ -43,12 +45,12 @@ const RegisterStepTwo = ({ onNext, onPrevious }) => {
           <View style={styles.pickerContainer}>
             <Picker
               selectedValue={gender}
-              onValueChange={(itemValue) => setGender(itemValue)}
+              onValueChange={(itemValue) => setFormData({ ...formData, gender: itemValue })}
               style={styles.picker}
               itemStyle={styles.pickerItem}
             >
-              <Picker.Item label="Femenino" value="Femenino" />
-              <Picker.Item label="Masculino" value="Masculino" />
+              <Picker.Item label="Femenino" value="F" />
+              <Picker.Item label="Masculino" value="M" />
             </Picker>
           </View>
         </View>
@@ -58,9 +60,11 @@ const RegisterStepTwo = ({ onNext, onPrevious }) => {
           <TextInput
             //placeholder="Estatura (cm)"
             style={styles.input}
-            value={height}
-            onChangeText={setHeight}
+            //value={height}
+            //onChangeText={setHeight}
             keyboardType="numeric"
+            value={formData.height.toString()} // Mantén el número tal como está
+            onChangeText={(value) => setFormData({ ...formData, height: parseInt(value) })} // Convierte el valor a entero antes de almacenarlo en el estado
           />
         </View>
         <View style={styles.inputContainer}>
@@ -68,10 +72,16 @@ const RegisterStepTwo = ({ onNext, onPrevious }) => {
           <TextInput
             //placeholder="Peso actual"
             style={styles.input}
-            value={weight}
-            onChangeText={setWeight}
+            value={formData.weight.toString()} // Mantén el número tal como está
+            onChangeText={(value) => setFormData({ ...formData, weight: value})} 
+
+            
+
+                    
           />
         </View>
+
+
       </View>
       <View style={styles.buttonContainer}>
         <TouchableOpacity style={styles.backButton} onPress={onPrevious}>

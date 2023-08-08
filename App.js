@@ -7,6 +7,7 @@ import { Ionicons, Entypo, FontAwesome } from '@expo/vector-icons';
 
 import LoginScreen from './components/screens/login/LoginScreen';
 import RegisterScreen from './components/screens/register/RegisterScreen';
+
 import HomeScreen from './components/screens/home/HomeScreen';
 import ProgressScreen from './components/screens/progress/ProgressScreen';
 import NotificationsScreen from './components/screens/notifications/NotificationsScreen';
@@ -75,32 +76,24 @@ const App = () => {
 
           >
             <Tab.Screen name="Home" component={HomeScreen} initialParams={{ dataPerson }} />
-
-
             {/* <Tab.Screen name="Home" component={HomeScreen} />*/}
 
             <Tab.Screen name="Progreso" component={ProgressScreen} />
             <Tab.Screen name="Notificaciones" component={NotificationsScreen} />
-            <Tab.Screen name="Perfil" component={ProfileScreen} />
+            <Tab.Screen name="Perfil" component={ProfileScreen} initialParams={{ dataPerson }}/>
           </Tab.Navigator>
         ) : (
           <Stack.Navigator>
             <Stack.Screen name="Login">
               {(props) => (
-                <LoginScreen {...props} isAuthenticated={isAuthenticated} setIsAuthenticated={setIsAuthenticated} {...props} onLoginSuccess={handleLoginSuccess}/>
+                <LoginScreen {...props} isAuthenticated={isAuthenticated} setIsAuthenticated={setIsAuthenticated} {...props} onLoginSuccess={handleLoginSuccess} />
                 
               )}
             </Stack.Screen>
             <Stack.Screen name="Registro" component={RegisterScreen} />
-            <Stack.Screen
-              name="Home"
-              component={HomeScreen}
-              initialParams={{
-                dataPerson:'',
+            <Stack.Screen name="Home" component={HomeScreen} initialParams={{dataPerson:'',}}/>
+            <Stack.Screen name="Perfil" component={ProfileScreen} initialParams={{dataPerson:'',}}/>
 
-          
-              }}
-            />
           </Stack.Navigator>
         )}
       </NavigationContainer>

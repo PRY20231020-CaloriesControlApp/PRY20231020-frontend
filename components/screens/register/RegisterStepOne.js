@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, TextInput, TouchableOpacity, Text, StyleSheet } from 'react-native';
 
-const RegisterStepOne = ({ onNext }) => {
+const RegisterStepOne = ({ onNext , formData, setFormData }) => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -18,17 +18,22 @@ const RegisterStepOne = ({ onNext }) => {
           <TextInput
             //placeholder="Ingrese su Nombre"
             style={styles.input}
-            value={name}
-            onChangeText={setName}
+            //value={name}
+           // onChangeText={setName}
+            value={formData.name}
+            onChangeText={(value) => setFormData({ ...formData, name: value })}
+            
           />
         </View>
         <View style={styles.inputContainer}>
-          <Text style={styles.label}>Correo</Text>
+          <Text style={styles.label}>Usuario</Text>
           <TextInput
             //placeholder="Ingrese su Correo electrónico"
             style={styles.input}
-            value={email}
-            onChangeText={setEmail}
+            //value={email}
+            //onChangeText={setEmail}
+            value={formData.user_name}
+            onChangeText={(value) => setFormData({ ...formData, user_name: value })}
           />
         </View>
         <View style={styles.inputContainer}>
@@ -37,8 +42,10 @@ const RegisterStepOne = ({ onNext }) => {
            //placeholder="Ingrese unaContraseña"
             style={styles.input}
             secureTextEntry
-            value={password}
-            onChangeText={setPassword}
+            //value={password}
+            //onChangeText={setPassword}
+            value={formData.password}
+            onChangeText={(value) => setFormData({ ...formData, password: value })}
           />
         </View>
         <View style={styles.inputContainer}>
@@ -49,6 +56,7 @@ const RegisterStepOne = ({ onNext }) => {
             secureTextEntry
             value={confirmPassword}
             onChangeText={setConfirmPassword}
+            
           />
         </View>
       </View>

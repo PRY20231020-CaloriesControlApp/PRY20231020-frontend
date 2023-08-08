@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Image } from 'react-native';
 
-const RegisterScreenFour = ({ onNext, onPrevious }) => {
+const RegisterScreenFour = ({ onNext, onPrevious,formData, setFormData }) => {
   const [selectedOptions, setSelectedOptions] = useState([]);
 
   const handleNext = () => {

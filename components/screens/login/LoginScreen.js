@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, TextInput, TouchableOpacity, Text, StyleSheet } from 'react-native';
 
 
-const LoginScreen = ({ navigation, isAuthenticated, setIsAuthenticated , route,onLoginSuccess }) => {
+const LoginScreen = ({ navigation, isAuthenticated, setIsAuthenticated , route,onLoginSuccess}) => {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -37,9 +37,12 @@ const LoginScreen = ({ navigation, isAuthenticated, setIsAuthenticated , route,o
       if (user_token && user_name && id_person) {
         setIsAuthenticated(true); // Utiliza directamente setIsAuthenticated
         onLoginSuccess(data);
+         
 
        //navigation.replace('Home', { user_token: user_token, user_name: user_name, id_person: id_person });
        navigation.replace('Home', { dataPerson: data }); // Pasar el objeto 'data' como parámetro
+       navigation.replace('Perfil', { dataPerson: data }); // Pasar el objeto 'data' como parámetro
+
 
 
 
@@ -54,7 +57,7 @@ const LoginScreen = ({ navigation, isAuthenticated, setIsAuthenticated , route,o
   };
 
   const handleRegister = () => {
-    navigation.navigate('Register');
+    navigation.navigate('Registro');
   };
 
   return (

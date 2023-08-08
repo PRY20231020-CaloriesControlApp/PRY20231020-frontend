@@ -1,14 +1,17 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
-const RegisterStepThree = ({ onNext, onPrevious }) => {
+const RegisterStepThree = ({ onNext, onPrevious, formData, setFormData }) => {
   const [activityLevel, setActivityLevel] = useState('');
 
   const handleNext = () => {
-   /* if (!activityLevel) {
-      Alert.alert('¡Atención!', 'Por favor, selecciona un nivel de actividad física');
-      return;
-    }*/
+    /* if (!activityLevel) {
+       Alert.alert('¡Atención!', 'Por favor, selecciona un nivel de actividad física');
+       return;
+     }*/
+
+    //setFormData({ ...formData, activityLevel }); // Guarda el nivel de actividad en el estado formData.
+    //onNext();
 
     onNext();
   };
@@ -22,35 +25,25 @@ const RegisterStepThree = ({ onNext, onPrevious }) => {
         <Text style={styles.label}>Nivel de Actividad Física</Text>
         <View style={styles.radioContainer}>
           <TouchableOpacity
-            style={[styles.radioButton, activityLevel === 'Poco o ningún ejercicio' && styles.radioButtonSelected]}
-            onPress={() => setActivityLevel('Poco o ningún ejercicio')}
+            style={[styles.radioButton, formData.activity_factor === 'Sedentaria o ligero' && styles.radioButtonSelected]}
+            onPress={() => setFormData({ ...formData, activity_factor: 'Sedentaria o ligero' })}
+
           >
-            <Text>Poco o ningún ejercicio</Text>
+            <Text>Sedentaria o ligero</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={[styles.radioButton, activityLevel === 'Ejercicio ligero (1 - 3 días por semana)' && styles.radioButtonSelected]}
-            onPress={() => setActivityLevel('Ejercicio ligero (1 - 3 días por semana)')}
+            style={[styles.radioButton, formData.activity_factor === 'Moderado' && styles.radioButtonSelected]}
+            onPress={() => setFormData({ ...formData, activity_factor: 'Moderado' })}
           >
-            <Text>Ejercicio ligero (1 - 3 días por semana)</Text>
+            <Text>Moderado</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={[styles.radioButton, activityLevel === 'Ejercicio moderado (3 - 5 días por semana)' && styles.radioButtonSelected]}
-            onPress={() => setActivityLevel('Ejercicio moderado (3 - 5 días por semana)')}
+            style={[styles.radioButton, formData.activity_factor === 'Activo' && styles.radioButtonSelected]}
+            onPress={() => setFormData({ ...formData, activity_factor: 'Activo' })}
           >
-            <Text>Ejercicio moderado (3 - 5 días por semana)</Text>
+            <Text>Activo</Text>
           </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.radioButton, activityLevel === 'Ejercicio fuerte (6 - 7 días por semana)' && styles.radioButtonSelected]}
-            onPress={() => setActivityLevel('Ejercicio fuerte (6 - 7 días por semana)')}
-          >
-            <Text>Ejercicio fuerte (6 - 7 días por semana)</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.radioButton, activityLevel === 'Ejercicio muy fuerte' && styles.radioButtonSelected]}
-            onPress={() => setActivityLevel('Ejercicio muy fuerte')}
-          >
-            <Text>Ejercicio muy fuerte</Text>
-          </TouchableOpacity>
+
         </View>
       </View>
       <View style={styles.buttonContainer}>

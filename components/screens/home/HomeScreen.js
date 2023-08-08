@@ -16,15 +16,18 @@ const windowWidth = Dimensions.get('window').width;
 
 
 const HomeScreen = ({ route }) => {
- // const { userToken, userName, personId } = route.params;
- const { dataPerson } = route.params; // Obtener el objeto 'data' de los parámetros
+  // const { userToken, userName, personId } = route.params;
+  const { dataPerson } = route.params; // Obtener el objeto 'data' de los parámetros
 
   // Acceder a las propiedades del objeto 'data'
   const personId = dataPerson.id_person;
   const userName = dataPerson.user_name;
   const userToken = dataPerson.token;
-  console.log ("****personId *******: ", personId)
-  console.log ("****userName *******: ", userName)
+  console.log("****personId *******: ", personId)
+  console.log("****userName 123*******: ", userName)
+
+  console.log("***INICIO  dataPerson.gender, dataPerson.weight, dataPerson.height, dataPerson.age, dataPerson.activity_factor")
+  console.log(dataPerson.gender, "  ", dataPerson.weight, "  ", dataPerson.height, " ", dataPerson.age, " ", dataPerson.activity_factor)
 
 
   const [selectedMeal, setSelectedMeal] = useState(null);
@@ -50,11 +53,116 @@ const HomeScreen = ({ route }) => {
   const [selectedDinner, setSelectedDinner] = useState([]);
 
 
+  const calculateNet = (gender, weight, height, age, activity_factor) => {
+    const PER_ETA = 0.1;
+
+    try {
+      weight = parseFloat(weight);
+      height = parseFloat(height);
+      age = parseFloat(age);
+    } catch (error) {
+      throw new Error('El peso, altura y edad deben ser números válidos.');
+    }
+
+    let tmb;
+    if (gender === 'M') {
+      tmb = 10 * weight + 6.25 * height - 5 * age + 5;
+    } else {
+      tmb = 10 * weight + 6.25 * height - 5 * age - 161;
+    }
+
+    const eta = tmb * PER_ETA;
+    const net = (tmb + eta) * parseFloat(activity_factor);
+
+    console.log('tmb ' + tmb);
+    console.log('PER_ETA ' + PER_ETA);
+    console.log('eta ' + eta);
+    console.log('activity_factor ' + activity_factor);
+    console.log('net ' + net);
+
+    return net;
+  };
+
+
+  const calculateIMC = (height, weight) => {
+    const heightMeters = height / 100;
+    const imc = parseFloat(weight) / (heightMeters ** 2);
+
+    if (imc < 18.5) {
+      return [imc, 'Bajo', 1];
+    } else if (imc <= 24.9) {
+      return [imc, 'Normal', 2];
+    } else if (imc <= 29.9) {
+      console.log('sobrepesoss');
+      return [imc, 'Sobrepeso', 3];
+    } else if (imc <= 34.9) {
+      return [imc, 'Obesidad I', 4];
+    } else if (imc <= 39.9) {
+      return [imc, 'Obesidad II', 5];
+    } else {
+      console.log('return', imc);
+      return [imc, 'Obesidad III', 6];
+    }
+  };
+
+  const obtainPercentageCaloricReduction = (imc_scale, caloric_reduction) => {
+    let speed = 'Normal';
+    if (caloric_reduction === 10) {
+      speed = 'Lento';
+    } else if (caloric_reduction === 15) {
+      console.log('Normal ******');
+      speed = 'Normal';
+    } else if (caloric_reduction === 25) {
+      speed = 'Rapido';
+    }
+
+    let percentageCaloricReduction = 0;
+
+    if (imc_scale === 1) {
+      if (speed === 'Lento' || speed === 'Normal' || speed === 'Rapido') {
+        percentageCaloricReduction = 0;
+      }
+    } else if (imc_scale === 2) {
+      if (speed === 'Lento') {
+        percentageCaloricReduction = 5;
+      } else if (speed === 'Normal') {
+        percentageCaloricReduction = 10;
+      } else if (speed === 'Rapido') {
+        percentageCaloricReduction = 15;
+      }
+    } else if (imc_scale >= 3 && imc_scale <= 6) {
+      if (speed === 'Lento') {
+        percentageCaloricReduction = 10;
+      } else if (speed === 'Normal') {
+        percentageCaloricReduction = 15;
+      } else if (speed === 'Rapido') {
+        percentageCaloricReduction = 25;
+      }
+    }
+
+    return percentageCaloricReduction;
+  };
+
+  const calculateTotalCalories = (net, percentageCaloricReduction) => {
+    if (percentageCaloricReduction !== 0) {
+      const calorieReduction = net * (percentageCaloricReduction / 100);
+      const totalCalories = Math.round(net - calorieReduction);
+      return totalCalories;
+    } else {
+      return Math.round(net);
+    }
+  };
+
+
+
+
   const isMealSelected = (mealType, item) => {
     return selectedMeals.some(
       (meal) => meal.id === item.id && meal.mealType === mealType
     );
   };
+
+
 
 
   //const connString = "dbname='postgres' user='pry20231020admin' host='pry20231020-db.postgres.database.azure.com' port='5432' password='P123456789**' sslmode='require'";
@@ -237,6 +345,10 @@ const HomeScreen = ({ route }) => {
     //handleOptionSelect('Desayuno', 1)
 
 
+
+
+
+
   }, []);
 
   const handleReload = (mealType) => {
@@ -317,7 +429,40 @@ const HomeScreen = ({ route }) => {
 
   };
 
-  
+
+  const recordProgress = (consumed_date, consumed_calories) => {
+
+    const datos = {
+      person_id: personId,// currentDay
+      consumed_date: consumed_date,//"Desayuno",//--
+      consumed_calories: consumed_calories
+    };
+
+    fetch('https://pry20231020-fn.azurewebsites.net/api/progress?', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(datos),
+    })
+      .then(function (response) {
+        if (!response.ok) {
+          throw new Error('Error en la solicitud. Código de estado: ' + response.status);
+        }
+        return response.json(); // Parseamos la respuesta como JSON
+      })
+      .then(function (data) {
+
+        console.log("Progreso registrado*** " + JSON.stringify(data));
+
+      })
+      .catch(function (error) {
+        console.error('Error al obtener la respuesta:', error);
+      });
+
+  };
+
+
 
   const handleCheckboxToggle = (meal) => {
     const updatedMeals = [...selectedMeals];
@@ -332,51 +477,24 @@ const HomeScreen = ({ route }) => {
     setSelectedMeals(updatedMeals);
   };
 
- /* const handleCheckboxToggle = (meal) => {
-    // Determine the current meal type (Desayuno, Almuerzo, or Cena)
-    const mealType = meal.mealType;
+  const getCurrentDate = () => {
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
 
-    switch (mealType) {
-      case 'Desayuno':
-        setSelectedBreakfast((prevSelected) => {
-          const mealIndex = prevSelected.findIndex((item) => item.id === meal.id);
-          if (mealIndex === -1) {
-            return [...prevSelected, meal];
-          } else {
-            const updatedSelected = [...prevSelected];
-            updatedSelected.splice(mealIndex, 1);
-            return updatedSelected;
-          }
-        });
-        break;
-      case 'Almuerzo':
-        setSelectedLunch((prevSelected) => {
-          const mealIndex = prevSelected.findIndex((item) => item.id === meal.id);
-          if (mealIndex === -1) {
-            return [...prevSelected, meal];
-          } else {
-            const updatedSelected = [...prevSelected];
-            updatedSelected.splice(mealIndex, 1);
-            return updatedSelected;
-          }
-        });
-        break;
-      case 'Cena':
-        setSelectedDinner((prevSelected) => {
-          const mealIndex = prevSelected.findIndex((item) => item.id === meal.id);
-          if (mealIndex === -1) {
-            return [...prevSelected, meal];
-          } else {
-            const updatedSelected = [...prevSelected];
-            updatedSelected.splice(mealIndex, 1);
-            return updatedSelected;
-          }
-        });
-        break;
-      default:
-        break;
-    }
-  };*/
+    return `${year}-${month}-${day}`;
+  };
+
+  const getCurrentTime = () => {
+    const date = new Date();
+    const hour = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+
+    return `${hour}:${minutes}`;
+  };
+
+
 
 
   const renderMealItem = ({ item }, mealType) => {
@@ -390,7 +508,7 @@ const HomeScreen = ({ route }) => {
             <Text style={styles.mealInfo}>{item.calories} kcal</Text>
           </View>
           <View style={styles.switchContainer}>
-          <Switch
+            <Switch
               value={selectedMeals.some((meal) => meal.id === item.id)}
               onValueChange={() => handleCheckboxToggle(item)}
             />
@@ -440,6 +558,37 @@ const HomeScreen = ({ route }) => {
     return null;
   };
 
+  // Calculate Net Calories
+  console.log('dataPerson.gender, dataPerson.weight, dataPerson.height, dataPerson.age, dataPerson.activity_factor');
+  console.log(dataPerson.gender, '  ', dataPerson.weight, '  ', dataPerson.height, ' ', dataPerson.age, ' ', dataPerson.activity_factor);
+
+  const netCalories = calculateNet(dataPerson.gender, dataPerson.weight, dataPerson.height, dataPerson.age, dataPerson.activity_factor);
+
+  // Calculate IMC
+  const [imc, imcCategory, imcScale] = calculateIMC(dataPerson.height, dataPerson.weight);
+  console.log('************IMC: ', imc, 'IMC Category: ', imcCategory, 'IMC Scale: ', imcScale);
+
+  // Calculate Percentage Caloric Reduction
+  const percentageCaloricReduction = obtainPercentageCaloricReduction(imcScale, dataPerson.caloric_reduction);
+  console.log('Percentage Caloric Reduction: ', percentageCaloricReduction);
+
+  // Calculate Total Calories
+  const totalCalories = calculateTotalCalories(netCalories, percentageCaloricReduction);
+  console.log('*****Total Calories: ', totalCalories);
+  const totalConsumedCalories = selectedMeals.reduce((total, meal) => total + meal.calories, 0);
+  const caloricReduction = Math.round(netCalories - totalConsumedCalories)
+
+  console.log('*****CALORIES REDUCCION POR DIA : ', caloricReduction);
+  const currentDate = getCurrentDate();
+  const currentTime = getCurrentTime();
+  console.log('*****currentTime*** : ', currentTime);
+
+
+  if (currentTime === '18:53') {
+    console.log('entre a funcion if current')
+    recordProgress(currentDate, caloricReduction);
+  }
+
 
   return (
     <View style={styles.container}>
@@ -449,7 +598,7 @@ const HomeScreen = ({ route }) => {
         <View style={styles.progressContainer}>
           <CircularProgress
             value={selectedMeals.reduce((total, meal) => total + meal.calories, 0)}
-            maxValue={2170}
+            maxValue={totalCalories}
             radius={80}
             duration={2000}
             progressValueColor={'#FFA500'}
@@ -462,14 +611,21 @@ const HomeScreen = ({ route }) => {
           />
 
           <Text style={styles.progressText}>
-            {selectedMeals.reduce((total, meal) => total + meal.calories, 0)}/{} kcal
+            {selectedMeals.reduce((total, meal) => total + meal.calories, 0)}/{totalCalories} kcal
           </Text>
         </View>
+
+
+
+
+
         {renderIngredientes()}
 
         {renderCategory('Desayuno', breakfastData, breakfastOptions)}
         {renderCategory('Almuerzo', lunchData, lunchOptions)}
         {renderCategory('Cena', dinnerData, dinnerOptions)}
+
+
 
 
       </ScrollView>
@@ -597,3 +753,6 @@ const styles = StyleSheet.create({
 });
 
 export default HomeScreen;
+
+
+
