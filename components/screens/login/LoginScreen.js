@@ -72,7 +72,7 @@ const LoginScreen = ({ navigation, isAuthenticated, setIsAuthenticated, route, o
   return (
     <View style={styles.container}>
       <View style={styles.appTitleContainer}>
-        <Text style={styles.appTitle}>Mi Aplicación</Text>
+        <Text style={styles.appTitle}>NutriSage</Text>
       </View>
 
       <View style={styles.logoContainer}>

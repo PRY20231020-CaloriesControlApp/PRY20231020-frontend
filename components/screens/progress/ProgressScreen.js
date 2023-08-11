@@ -1,61 +1,38 @@
 import React from 'react';
-import { View, StyleSheet, Text, ScrollView, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, Text, ScrollView, TouchableOpacity, FlatList } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+
+
 
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import CircularProgress from 'react-native-circular-progress-indicator';
 
 const ProgressScreen = ({ route, navigation }) => {
   const { dataPerson } = route.params;
-
-  // Obtén el arreglo de progreso del objeto dataPerson
   const progressData = dataPerson.progress;
-
-  // Calcula la cantidad total de calorías consumidas
   const totalConsumedCalories = progressData.reduce((total, progress) => total + progress.consumed_calories, 0);
-
-  // Calcula la cantidad de días desde el registro
   const registrationDate = new Date(dataPerson.registration_date);
   const currentDate = new Date();
   const daysSinceRegistration = Math.floor((currentDate - registrationDate) / (1000 * 60 * 60 * 24));
-
-  // Calcula el progreso circular (porcentaje de calorías consumidas respecto a la meta)
-  const goalCalories = 2000; // Supongamos una meta de 2000 calorías diarias
+  const goalCalories = 10000;
   const progressPercent = goalCalories !== 0 ? (totalConsumedCalories / goalCalories) * 100 : 0;
+  const dailyProgressDetails = progressData.map((progress) => {
+    const utcDate = new Date(progress.consumed_date);
+    const localDate = new Date(utcDate.getUTCFullYear(), utcDate.getUTCMonth(), utcDate.getUTCDate());
+    const formattedDate = localDate.toLocaleDateString('es-ES', { weekday: 'long' });
 
-  // Obtén detalles diarios de progreso
-  const dailyProgressDetails = progressData.map((progress) => ({
-    day: new Date(progress.consumed_date).toLocaleDateString('es-ES', { weekday: 'long' }),
-
-    consumedCalories: progress.consumed_calories,
-  }));
-  const obtenerDiaEnEspanol = (day) => {
-    console.log("Ingreseeeee  ")
-    const daysInSpanish = {
-      Monday: 'Lunes',
-      Tuesday: 'Martes',
-      Wednesday: 'Miércoles',
-      Thursday: 'Jueves',
-      Friday: 'Viernes',
-      Saturday: 'Sábado',
-      Sunday: 'Domingo',
+    return {
+      day: formattedDate,
+      consumedCalories: progress.consumed_calories,
     };
-
-    return daysInSpanish[day] || day;
-  };
-
-  const formatDate = (dateString) => {
-    const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
-    return new Date(dateString).toLocaleDateString('es-ES', options);
-  };
+  });
 
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <View style={styles.container}>
       <View style={styles.headerContainer}>
         <Text style={styles.headerText}>Mi Progreso</Text>
       </View>
-
       <View style={styles.statsContainer}>
         <View style={styles.statBox}>
           <Text style={styles.statLabel}>Calorías perdidas</Text>
@@ -74,7 +51,7 @@ const ProgressScreen = ({ route, navigation }) => {
           percent={progressPercent}
           color="transparent"
           value={totalConsumedCalories}
-          maxValue={2500}
+          maxValue={10000}
           radius={80}
           duration={2000}
           progressValueColor={'#FFA500'}
@@ -90,17 +67,22 @@ const ProgressScreen = ({ route, navigation }) => {
 
       <View style={styles.dailyProgressContainer}>
         <Text style={styles.dailyProgressHeaderText}>Detalles Diarios</Text>
-        {dailyProgressDetails.map((detail, index) => (
-          <View key={index} style={styles.dailyProgressItem}>
-            <Text style={styles.dayText}>{detail.day.charAt(0).toUpperCase() + detail.day.slice(1)}</Text>
-            <Text style={styles.caloriesText}>{detail.consumedCalories} kcal</Text>
-          </View>
-        ))}
+        <View>
+          <FlatList
+            data={dailyProgressDetails}
+            keyExtractor={(detail, index) => index.toString()}
+            renderItem={({ item, index }) => (
+              <View style={styles.dailyProgressItem}>
+                <Text style={styles.dayText}>{item.day.charAt(0).toUpperCase() + item.day.slice(1)}</Text>
+                <Text style={styles.caloriesText}>{item.consumedCalories} kcal</Text>
+              </View>
+            )}
+          />
+        </View>
       </View>
-    </ScrollView>
+    </View>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -198,7 +180,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#777',
   },
-  
+
 });
 
 export default ProgressScreen;

@@ -13,7 +13,6 @@ import ProgressScreen from './components/screens/progress/ProgressScreen';
 import NotificationsScreen from './components/screens/notifications/NotificationsScreen';
 import ProfileScreen from './components/screens/profile/ProfileScreen';
 
-
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
@@ -21,20 +20,8 @@ const Tab = createBottomTabNavigator();
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  const user_token = 'valor_del_token'; // Reemplaza 'valor_del_token' con el token real
-  const user_name = 'valor_del_user_name'; // Reemplaza 'valor_del_user_name' con el nombre de usuario real
-  const id_person = '10'; // Reemplaza 'valor_del_id_person' con el id de la persona real
 
-  const [userToken, setUserToken] = useState('');
-  const [userName, setUserName] = useState('');
-  const [personId, setPersonId] = useState('');
-
-  const handleLoginSuccess3 = (token, name, id) => {
-    setIsAuthenticated(true);
-    setUserToken(token);
-    setUserName(name);
-    setPersonId(id);
-  };
+  
 
   const [dataPerson, setDataPerson] = useState({});
 
@@ -52,6 +39,12 @@ const App = () => {
 
   };
 
+  const updateProfile = (data) => {
+    console.log("HOLAAAAAAA updateProfile")
+    setDataPerson(data);
+
+  };
+
   return (
     <View style={styles.container}>
       <NavigationContainer>
@@ -65,7 +58,7 @@ const App = () => {
               tabBarIcon: ({ color, size }) => {
                 let iconName;
 
-                if (route.name === 'Home') {
+                if (route.name === 'Inicio') {
                   iconName = 'home';
                 } else if (route.name === 'Progreso') {
                   iconName = 'bar-chart';
@@ -83,7 +76,7 @@ const App = () => {
 
 
           >
-            <Tab.Screen name="Home" component={HomeScreen} initialParams={{ dataPerson }} />
+            <Tab.Screen name="Inicio" component={HomeScreen} initialParams={{ dataPerson }} />
             {/* <Tab.Screen name="Home" component={HomeScreen} />*/}
 
             <Tab.Screen name="Progreso" component={ProgressScreen} initialParams={{ dataPerson }} />
@@ -98,10 +91,8 @@ const App = () => {
 
               )}
             </Stack.Screen>
-            {/*<Stack.Screen name="Registro" component={RegisterScreen} />*/}
             <Stack.Screen name="Registro">
               {(props) => {
-                console.log("Props pasadas a RegisterScreen:", props); // Agregado console.log
                 return (
                   <RegisterScreen
                     {...props}
@@ -111,34 +102,19 @@ const App = () => {
                 );
               }}
             </Stack.Screen>
-
             <Stack.Screen name="Home" component={HomeScreen} initialParams={{ dataPerson: '', }} />
-            {/*<Stack.Screen name="Perfil" component={ProfileScreen} initialParams={{dataPerson:'',}}  />*/}
-            {/* <Stack.Screen name="Perfil">
-              {(props) => (
-                <ProfileScreen
-                  {...props} // Pasa todas las props a ProfileScreen
-                  onLoginSuccess={handleLoginSuccess}
-                  initialParams={{ dataPerson: '' }} // Agrega los parámetros iniciales
-                />
-              )}
-              </Stack.Screen>*/}
-
             <Stack.Screen name="Perfil">
-              {(props) => (
-                <ProfileScreen
-                  {...props} // Pasa todas las props a ProfileScreen
-                  onLoginSuccess={handleLoginSuccess}
-                  initialParams={{ dataPerson: '' }} // Agrega los parámetros iniciales
-                />
-              )}
+              {(props) => {
+                return (
+                  <ProfileScreen
+                    {...props}
+                    initialParams={{ dataPerson: '' }}
+                    updateDataPerson={updateProfile} 
+                  />
+                );
+              }}
             </Stack.Screen>
-
             <Stack.Screen name="Progreso" component={ProgressScreen} initialParams={{ dataPerson: '', }} />
-
-
-
-
           </Stack.Navigator>
         )}
       </NavigationContainer>

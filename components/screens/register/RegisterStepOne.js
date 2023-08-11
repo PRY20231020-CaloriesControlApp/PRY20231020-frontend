@@ -60,9 +60,15 @@ const RegisterStepOne = ({ onNext , formData, setFormData }) => {
           />
         </View>
       </View>
+     
+
+
+      <View style={styles.buttonContainer}>
       <TouchableOpacity style={styles.nextButton} onPress={onNext}>
         <Text style={styles.nextButtonText}>Siguiente</Text>
       </TouchableOpacity>
+      </View>
+
     </View>
   );
 };
@@ -105,9 +111,20 @@ const styles = StyleSheet.create({
     borderColor: '#FFA500',
     paddingHorizontal: 10,
     borderRadius: 8,
+    //alignItems: 'center', // Centrar verticalmente el contenido
+    //justifyContent: 'center', // Centrar horizontalmente el contenido
+
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+   justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    marginTop: 20,
+    marginBottom:20,
+    justifyContent: 'center',
   },
   nextButton: {
-    width: '80%',
+    width: '50%',
     backgroundColor: '#FFA500',
     paddingHorizontal: 20,
     paddingVertical: 10,

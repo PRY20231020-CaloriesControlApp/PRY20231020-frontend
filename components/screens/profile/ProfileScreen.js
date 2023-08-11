@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, Modal, TextInput } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, Modal, TextInput, Alert } from 'react-native';
 
 import { FontAwesome } from '@expo/vector-icons';
 import { SelectList } from 'react-native-dropdown-select-list'
 
 
 
-  const ProfileScreen = ({ route, navigation ,onLoginSuccess}) => {
+///const ProfileScreen = ({ route, navigation, onLoginSuccess }) => {
+
+const ProfileScreen = ({ navigation, route, updateDataPerson }) => {
 
   const { dataPerson } = route.params;
 
@@ -38,9 +40,9 @@ import { SelectList } from 'react-native-dropdown-select-list'
   const [selected, setSelected] = React.useState("");
 
   const data = [
-    { key: '1', value: 'Sedentaria o ligero' },
-    { key: '2', value: 'Moderado' },
-    { key: '3', value: 'Activo' },
+    { key: 1.5, value: 'Sedentaria o ligero' },
+    { key: 1.8, value: 'Moderado' },
+    { key: 2.2, value: 'Activo' },
   ];
 
 
@@ -49,56 +51,120 @@ import { SelectList } from 'react-native-dropdown-select-list'
     { key: 'M', value: 'Masculino' },
   ];
 
+
+  const confirmLogout = () => {
+    Alert.alert(
+      'Cerrar Sesión',
+      '¿Estás seguro de que deseas cerrar sesión?',
+      [
+        {
+          text: 'Cancelar',
+          style: 'cancel',
+        },
+        {
+          text: 'Cerrar Sesión',
+          style: 'destructive',
+          onPress: () => {
+            // Realiza la acción de cerrar sesión aquí, por ejemplo, limpiar los datos de autenticación
+
+            // Ahora realiza la navegación de 'RESET' al componente LoginScreen
+            //navigation.replace('Home', { dataPerson: data }); // Pasar el objeto 'data' como parámetro
+
+          },
+        },
+      ],
+      { cancelable: false }
+    );
+  };
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Perfil</Text>
+
       <Image
         source={{ uri: imageUrl }} // Replace with the actual user image URL
         style={styles.profileImage}
       />
       <Text style={styles.userName}>{dataPerson.user_name}</Text>
+
       <View style={styles.userInfoContainer}>
+
+
         <View style={styles.userInfo}>
-          <Text style={styles.label}>Nombre:</Text>
+          <View style={styles.userLabel}>
+            <FontAwesome name="user" size={20} color="black" />
+            <Text style={styles.labelWithIcon}>Nombre:</Text>
+          </View>
           <Text style={styles.info}>{dataPerson.name}</Text>
         </View>
         <View style={styles.userInfo}>
-          <Text style={styles.label}>Fecha de Nacimiento:</Text>
+          <View style={styles.userLabel}>
+            <FontAwesome name="birthday-cake" size={20} color="black" />
+            <Text style={styles.labelWithIcon}>Fecha de Nacimiento:</Text>
+          </View>
           <Text style={styles.info}>{dataPerson.birth_date}</Text>
         </View>
         <View style={styles.userInfo}>
-          <Text style={styles.label}>Edad:</Text>
+          <View style={styles.userLabel}>
+            <FontAwesome name="user" size={20} color="black" />
+            <Text style={styles.labelWithIcon}>Edad:</Text>
+          </View>
           <Text style={styles.info}>{dataPerson.age}</Text>
         </View>
         <View style={styles.userInfo}>
-          <Text style={styles.label}>Sexo:</Text>
+          <View style={styles.userLabel}>
+            <FontAwesome name="venus-mars" size={20} color="black" />
+            <Text style={styles.labelWithIcon}>Sexo:</Text>
+          </View>
           <Text style={styles.info}>{dataPerson.gender}</Text>
         </View>
         <View style={styles.userInfo}>
-          <Text style={styles.label}>Altura:</Text>
+          <View style={styles.userLabel}>
+            <FontAwesome name="arrows-v" size={20} color="black" />
+            <Text style={styles.labelWithIcon}>Altura:</Text>
+          </View>
           <Text style={styles.info}>{dataPerson.height} cm</Text>
         </View>
         <View style={styles.userInfo}>
-          <Text style={styles.label}>Peso:</Text>
+          <View style={styles.userLabel}>
+            <FontAwesome name="balance-scale" size={20} color="black" />
+            <Text style={styles.labelWithIcon}>Peso:</Text>
+          </View>
           <Text style={styles.info}>{dataPerson.weight} kg</Text>
         </View>
         <View style={styles.userInfo}>
-          <Text style={styles.label}>Actividad Física:</Text>
+          <View style={styles.userLabel}>
+            <FontAwesome name="heartbeat" size={20} color="black" />
+            <Text style={styles.labelWithIcon}>Actividad Física:</Text>
+          </View>
           <Text style={styles.info}>{getActivityLabel(dataPerson.activity_factor)}</Text>
         </View>
+      
+
+        <TouchableOpacity
+          style={styles.logOut}
+          onPress={confirmLogout}
+        >
+          <View style={styles.userLabel}>
+            <FontAwesome name="sign-out" size={20} color="red" />
+            <Text style={[styles.labelWithIcon, { color: 'red' }]}>Cerrar Sesión</Text>
+          </View>
+        </TouchableOpacity>
+
       </View>
+
+
       <TouchableOpacity
         style={styles.editIconContainer}
         onPress={toggleEditModal}
       >
         <FontAwesome name="edit" size={24} color="#FFA500" />
       </TouchableOpacity>
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => navigation.navigate('Progreso')}
-      >
-        <Text style={styles.buttonText}>Ver Progreso</Text>
-      </TouchableOpacity>
+
+      {/* Botón para ver progreso */}
+
+
+ 
+
       <Modal
         visible={isEditModalVisible}
         animationType="slide"
@@ -131,20 +197,16 @@ import { SelectList } from 'react-native-dropdown-select-list'
                 placeholder="Ingrese su fecha de nacimiento"
               />
             </View>
-            <View style={styles.editInputContainer}>
-              <Text style={styles.editInputLabel}>Edad:</Text>
-              <TextInput
-                style={styles.editInput}
-                value={newDataPerson.age.toString()} // Convertir a texto para mostrarlo en el input
-                onChangeText={(text) =>
-                  setNewDataPerson({ ...newDataPerson, age: text })
-                }
-                placeholder="Ingrese su edad"
-              />
-            </View>
+
             <View style={styles.editInputContainer}>
               <Text style={styles.editInputLabel}>Sexo:</Text>
               <SelectList
+                boxStyles={{
+                  width: '100%',
+                  borderWidth: 1,
+                  borderColor: '#FFA500',
+                  borderRadius: 8,
+                }}
                 setSelected={(key) => {
                   const selectedValue = genderOptions.find((option) => option.key === key)?.value || '';
                   setNewDataPerson({ ...newDataPerson, gender: key });
@@ -157,18 +219,18 @@ import { SelectList } from 'react-native-dropdown-select-list'
               />
             </View>
             <View style={styles.editInputContainer}>
-              <Text style={styles.editInputLabel}>Altura:</Text>
+              <Text style={styles.editInputLabel}>Altura (cm):</Text>
               <TextInput
                 style={styles.editInput}
                 value={newDataPerson.height.toString()}
                 onChangeText={(text) =>
                   setNewDataPerson({ ...newDataPerson, height: text })
                 }
-                placeholder="Ingrese su altura"
+                placeholder="Ingrese su altura:"
               />
             </View>
             <View style={styles.editInputContainer}>
-              <Text style={styles.editInputLabel}>Peso:</Text>
+              <Text style={styles.editInputLabel}>Peso (kg):</Text>
               <TextInput
                 style={styles.editInput}
                 value={newDataPerson.weight.toString()}
@@ -178,17 +240,7 @@ import { SelectList } from 'react-native-dropdown-select-list'
                 placeholder="Ingrese su peso"
               />
             </View>
-            {/*<View style={styles.editInputContainer}>
-              <Text style={styles.editInputLabel}>Factor de Actividad:</Text>
-              <TextInput
-                style={styles.editInput}
-                value={newDataPerson.activity_factor.toString()}
-                onChangeText={(text) =>
-                  setNewDataPerson({ ...newDataPerson, activity_factor: text })
-                }
-                placeholder="Ingrese su factor de actividad"
-              />
-              </View>*/}
+
             <View style={styles.editInputContainer}>
               <Text style={styles.editInputLabel}>Factor de Actividad:</Text>
               <SelectList
@@ -200,7 +252,12 @@ import { SelectList } from 'react-native-dropdown-select-list'
                 save="key"
                 selected={newDataPerson.activity_factor} // Valor seleccionado
                 placeholder="Seleccione"
-
+                boxStyles={{
+                  width: '100%',
+                  borderWidth: 1,
+                  borderColor: '#FFA500',
+                  borderRadius: 8,
+                }}
               />
             </View>
 
@@ -237,7 +294,7 @@ import { SelectList } from 'react-native-dropdown-select-list'
                   id_person: newDataPerson.id_person
 
                 };
-                console.log("**** ****datos***** ", datos)
+                console.log("**** ****datos updateeeeeeeeee ***** ", datos)
 
 
 
@@ -255,17 +312,16 @@ import { SelectList } from 'react-native-dropdown-select-list'
                     return response.json(); // Usamos response.json() para obtener la respuesta como un objeto JavaScript
                   })
                   .then(function (data) {
-                    console.log('data =', data);
-                    //setDataPerson(data); 
-                    //dataPerson=newDataPerson
-                    //onLoginSuccess(data);
+                    console.log('UPDATE data =', data);
+                    navigation.navigate('Perfil', { dataPerson: data });
+                    navigation.navigate('Inicio', { dataPerson: data });
+                    navigation.navigate('Progreso', { dataPerson: data });
+                    navigation.navigate('Perfil', { dataPerson: data });
+
+                    // navigation.navigate('Notificaciones', {dataPerson: data});
+
 
                     console.log('Actualizacion con exito ');
-
-
-
-                    //navigation.replace('Home', { dataPerson: data }); // Pasar el objeto 'data' como parámetro
-                    //navigation.replace('Perfil', { dataPerson: data }); // Pasar el objeto 'data' como parámetro
 
 
                   })
@@ -284,6 +340,8 @@ import { SelectList } from 'react-native-dropdown-select-list'
             >
               <Text style={styles.cancelButtonText}>Cancelar</Text>
             </TouchableOpacity>
+
+
           </View>
         </View>
       </Modal>
@@ -333,6 +391,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 8,
   },
+  logOut: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+    marginTop: 20,
+  },
+
   label: {
     fontSize: 16,
     fontWeight: 'bold',
@@ -355,6 +421,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 20,
     right: 20,
+    zIndex: 1, // Asegura que el botón esté por encima de otros elementos
   },
   editModalContainer: {
     flex: 1,
@@ -387,12 +454,14 @@ const styles = StyleSheet.create({
   },
   editInput: {
     width: '100%',
-    height: 40,
+    height: 45,
     borderWidth: 1,
-    borderColor: 'gray',
-    borderRadius: 5,
     paddingHorizontal: 10,
     textAlign: 'left', // Alinear a la izquierda
+    borderColor: '#FFA500',
+    paddingHorizontal: 10,
+    borderRadius: 8,
+
   },
   saveButton: {
     backgroundColor: '#FFA500',
@@ -405,6 +474,31 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
   },
+
+
+  logoutButton: {
+    position: 'absolute',
+    top: 20,
+    right: 20,
+  },
+  logoutButtonText: {
+    color: '#FFA500',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+
+  userLabel: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+
+  labelWithIcon: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginLeft: 5,
+  },
+
 });
 
 export default ProfileScreen;

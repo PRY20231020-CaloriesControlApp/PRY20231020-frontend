@@ -561,7 +561,7 @@ const HomeScreen = ({ route }) => {
         {/* Modal */}
         <Modal visible={modalVisible[mealType] || false} animationType="slide">
           <View style={styles.modalContainerGroup}>
-            <Text style={styles.modalTitleGroup}>Seleccione la opción de su preferencia</Text>
+            <Text style={styles.modalTitleGroup}>Seleccione la opción de su preferencia: </Text>
             <View style={styles.buttonContainerGroup}>
               {options.map((option) => (
                 <TouchableOpacity key={option.id} style={styles.buttonGroup} onPress={() => handleOptionSelect(mealType, option.id)}>
@@ -642,10 +642,6 @@ const HomeScreen = ({ route }) => {
             {selectedMeals.reduce((total, meal) => total + meal.calories, 0)}/{totalCalories} kcal
           </Text>
         </View>
-
-
-
-
 
         {renderIngredientes()}
 
@@ -755,13 +751,8 @@ const styles = StyleSheet.create({
     paddingLeft: 30,
     paddingRight: 30,
     paddingTop: 10,
-
     paddingBottom: 10,
-
     backgroundColor: 'white',
-
-
-
   },
   ingredientName: {
     fontSize: 16,
@@ -828,7 +819,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 10,
     alignItems: 'center',
-    width: '80%', // Ancho de los botones
+    width: '60%', // Ancho de los botones
     marginBottom: 10, // Espacio entre los botones
   },
   buttonTextGroup: {

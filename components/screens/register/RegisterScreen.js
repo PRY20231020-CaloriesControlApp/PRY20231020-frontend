@@ -2,11 +2,9 @@ import React, { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
 
-import Home from '../home/HomeScreen';
 import RegisterStepOne from './RegisterStepOne';
 import RegisterStepTwo from './RegisterStepTwo';
 import RegisterStepThree from './RegisterStepThree';
-import RegisterStepFour from './RegisterStepFour';
 
 const Stack = createStackNavigator();
 
@@ -14,7 +12,7 @@ const RegisterScreen = ({ navigation, onRegistrationComplete, handleLoginSuccess
 
 
   const [currentStep, setCurrentStep] = useState(1);
-  const totalSteps = 4;
+  const totalSteps = 3;
 
   const [formData, setFormData] = useState({
     name: '',
@@ -34,7 +32,7 @@ const RegisterScreen = ({ navigation, onRegistrationComplete, handleLoginSuccess
     if (currentStep === totalSteps) {
       console.log('Registro completado');
       //setFormData (parseFloat(formData.weight))
-      console.log('Datos del formulario:', formData); // Muestra los datos del formulario en la consola
+      console.log('Datos del formulario: data que llego', formData); // Muestra los datos del formulario en la consola
 
       fetch('https://pry20231020-fn.azurewebsites.net/api/registro?', {
         method: 'POST',
@@ -76,7 +74,7 @@ const RegisterScreen = ({ navigation, onRegistrationComplete, handleLoginSuccess
           weight: parseFloat(formData.weight),
         });
         break;
-      case 3:
+    /*  case 3:
         // Ejemplo: Cambiar 'activity_factor' por 1.5 en float
         if (formData.activity_factor === 'Sedentaria o ligero') {
           setFormData({
@@ -96,7 +94,7 @@ const RegisterScreen = ({ navigation, onRegistrationComplete, handleLoginSuccess
             activity_factor: 2.2,
           });
         }
-        break;
+        break;*/
       default:
         break;
     }
@@ -116,8 +114,7 @@ const RegisterScreen = ({ navigation, onRegistrationComplete, handleLoginSuccess
         return <RegisterStepTwo onNext={handleNextStep} onPrevious={() => setCurrentStep(currentStep - 1)} formData={formData} setFormData={setFormData} />;
       case 3:
         return <RegisterStepThree onNext={handleNextStep} onPrevious={() => setCurrentStep(currentStep - 1)} formData={formData} setFormData={setFormData} />;
-      case 4:
-        return <RegisterStepFour onNext={handleNextStep} onPrevious={() => setCurrentStep(currentStep - 1)} formData={formData} setFormData={setFormData} />;
+    
       default:
         return null;
     }
