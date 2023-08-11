@@ -1,22 +1,53 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, Modal, TextInput } from 'react-native';
-import { FontAwesome } from '@expo/vector-icons';
 
-const ProfileScreen = ({ route, navigation }) => {
+import { FontAwesome } from '@expo/vector-icons';
+import { SelectList } from 'react-native-dropdown-select-list'
+
+
+
+  const ProfileScreen = ({ route, navigation ,onLoginSuccess}) => {
+
   const { dataPerson } = route.params;
+
+
 
   const personId = dataPerson.id_person;
   const blobStorageBaseUrl = 'https://pry20231020fnb6cf.blob.core.windows.net/';
   const containerName = 'pry20231020-dataset-ml';
-  const blobName = '1.jpg';
+  const blobName = '1Perfil.jpg';
   const imageUrl = `${blobStorageBaseUrl}${containerName}/${blobName}`;
 
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
-  const [newDataPerson, setNewDataPerson] = useState(dataPerson);
+  const [newDataPerson, setNewDataPerson] = useState(dataPerson, { activity_factor: '', });
 
   const toggleEditModal = () => {
     setIsEditModalVisible(!isEditModalVisible);
   };
+  const getActivityLabel = (activityFactor) => {
+    if (activityFactor === 1.5) {
+      return 'Sedentaria o ligero';
+    } else if (activityFactor === 1.8) {
+      return 'Moderado';
+    } else if (activityFactor === 2.2) {
+      return 'Activo';
+    } else {
+      return 'Otro'; // Cambia este mensaje según tus necesidades
+    }
+  };
+  const [selected, setSelected] = React.useState("");
+
+  const data = [
+    { key: '1', value: 'Sedentaria o ligero' },
+    { key: '2', value: 'Moderado' },
+    { key: '3', value: 'Activo' },
+  ];
+
+
+  const genderOptions = [
+    { key: 'F', value: 'Femenino' },
+    { key: 'M', value: 'Masculino' },
+  ];
 
   return (
     <View style={styles.container}>
@@ -28,12 +59,24 @@ const ProfileScreen = ({ route, navigation }) => {
       <Text style={styles.userName}>{dataPerson.user_name}</Text>
       <View style={styles.userInfoContainer}>
         <View style={styles.userInfo}>
-          <Text style={styles.label}>Edad:</Text>
-          <Text style={styles.info}>{dataPerson.age}</Text>
+          <Text style={styles.label}>Nombre:</Text>
+          <Text style={styles.info}>{dataPerson.name}</Text>
         </View>
         <View style={styles.userInfo}>
           <Text style={styles.label}>Fecha de Nacimiento:</Text>
           <Text style={styles.info}>{dataPerson.birth_date}</Text>
+        </View>
+        <View style={styles.userInfo}>
+          <Text style={styles.label}>Edad:</Text>
+          <Text style={styles.info}>{dataPerson.age}</Text>
+        </View>
+        <View style={styles.userInfo}>
+          <Text style={styles.label}>Sexo:</Text>
+          <Text style={styles.info}>{dataPerson.gender}</Text>
+        </View>
+        <View style={styles.userInfo}>
+          <Text style={styles.label}>Altura:</Text>
+          <Text style={styles.info}>{dataPerson.height} cm</Text>
         </View>
         <View style={styles.userInfo}>
           <Text style={styles.label}>Peso:</Text>
@@ -41,7 +84,7 @@ const ProfileScreen = ({ route, navigation }) => {
         </View>
         <View style={styles.userInfo}>
           <Text style={styles.label}>Actividad Física:</Text>
-          <Text style={styles.info}>{dataPerson.activity_factor}</Text>
+          <Text style={styles.info}>{getActivityLabel(dataPerson.activity_factor)}</Text>
         </View>
       </View>
       <TouchableOpacity
@@ -100,14 +143,17 @@ const ProfileScreen = ({ route, navigation }) => {
               />
             </View>
             <View style={styles.editInputContainer}>
-              <Text style={styles.editInputLabel}>Género:</Text>
-              <TextInput
-                style={styles.editInput}
-                value={newDataPerson.gender}
-                onChangeText={(text) =>
-                  setNewDataPerson({ ...newDataPerson, gender: text })
-                }
-                placeholder="Ingrese su género"
+              <Text style={styles.editInputLabel}>Sexo:</Text>
+              <SelectList
+                setSelected={(key) => {
+                  const selectedValue = genderOptions.find((option) => option.key === key)?.value || '';
+                  setNewDataPerson({ ...newDataPerson, gender: key });
+                }}
+                data={genderOptions}
+                save="key"
+                selected={newDataPerson.gender} // Valor seleccionado
+                placeholder="Seleccione"
+
               />
             </View>
             <View style={styles.editInputContainer}>
@@ -132,7 +178,7 @@ const ProfileScreen = ({ route, navigation }) => {
                 placeholder="Ingrese su peso"
               />
             </View>
-            <View style={styles.editInputContainer}>
+            {/*<View style={styles.editInputContainer}>
               <Text style={styles.editInputLabel}>Factor de Actividad:</Text>
               <TextInput
                 style={styles.editInput}
@@ -142,32 +188,59 @@ const ProfileScreen = ({ route, navigation }) => {
                 }
                 placeholder="Ingrese su factor de actividad"
               />
+              </View>*/}
+            <View style={styles.editInputContainer}>
+              <Text style={styles.editInputLabel}>Factor de Actividad:</Text>
+              <SelectList
+                setSelected={(key) => {
+                  const selectedValue = data.find((option) => option.key === key)?.value || '';
+                  setNewDataPerson({ ...newDataPerson, activity_factor: selectedValue });
+                }}
+                data={data}
+                save="key"
+                selected={newDataPerson.activity_factor} // Valor seleccionado
+                placeholder="Seleccione"
+
+              />
             </View>
+
 
 
             <TouchableOpacity
               style={styles.saveButton}
               onPress={() => {
-                console.log ("**** newDataPerson ",newDataPerson)
+                console.log("**** newDataPerson ", newDataPerson)
+
+
+                if (newDataPerson.activity_factor == 'Sedentaria o ligero') {
+                  new_activity_factor = 1.5
+                } else if (newDataPerson.activity_factor == 'Sedentaria o ligero') {
+                  new_activity_factor = 1.8
+
+                } else {
+                  new_activity_factor = 2.2
+
+                }
+
 
                 const datos = {
                   name: newDataPerson.name,
                   user_name: newDataPerson.user_name,
                   password: '123',
                   birth_date: newDataPerson.birth_date,
-                  gender:newDataPerson.gender, 
+                  gender: newDataPerson.gender,
                   height: parseInt(newDataPerson.height),
                   weight: parseFloat(newDataPerson.weight),
-                  activity_factor: parseFloat(newDataPerson.activity_factor),
-                  caloric_reduction:parseInt(newDataPerson.caloric_reduction),
+                  activity_factor: new_activity_factor,
+                  caloric_reduction: parseInt(newDataPerson.caloric_reduction),
                   action: "update",
                   id_person: newDataPerson.id_person
-            
+
                 };
-                console.log ("**** ****datos***** ",datos)
+                console.log("**** ****datos***** ", datos)
 
 
-              
+
                 fetch('https://pry20231020-fn.azurewebsites.net/api/registro?', {
                   method: 'POST',
                   headers: {
@@ -183,7 +256,10 @@ const ProfileScreen = ({ route, navigation }) => {
                   })
                   .then(function (data) {
                     console.log('data =', data);
+                    //setDataPerson(data); 
                     //dataPerson=newDataPerson
+                    //onLoginSuccess(data);
+
                     console.log('Actualizacion con exito ');
 
 
@@ -195,9 +271,9 @@ const ProfileScreen = ({ route, navigation }) => {
                   })
                   .catch(function (error) {
                     console.error('Error al obtener la respuesta:', error);
-                  }); 
-                  
-                  toggleEditModal();
+                  });
+
+                toggleEditModal();
               }}
             >
               <Text style={styles.saveButtonText}>Guardar Cambios</Text>
@@ -246,9 +322,10 @@ const styles = StyleSheet.create({
   userInfoContainer: {
     backgroundColor: 'white',
     borderRadius: 10,
-    padding: 10,
+    padding: 25,
     width: '90%',
     marginBottom: 20,
+
   },
   userInfo: {
     flexDirection: 'row',

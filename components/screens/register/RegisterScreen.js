@@ -10,7 +10,9 @@ import RegisterStepFour from './RegisterStepFour';
 
 const Stack = createStackNavigator();
 
-const RegisterScreen = ({ navigation }) => {
+const RegisterScreen = ({ navigation, onRegistrationComplete, handleLoginSuccess2 }) => {
+
+
   const [currentStep, setCurrentStep] = useState(1);
   const totalSteps = 4;
 
@@ -49,8 +51,10 @@ const RegisterScreen = ({ navigation }) => {
         })
         .then(function (data) {
           console.log("+++++data" + JSON.stringify(data));
-          //navigation.navigate('HomeScreen');
-          navigation.replace('Home', { dataPerson: data });
+          //onRegistrationComplete(data)
+          handleLoginSuccess2(data);
+          //navigation.replace('Home', { user_token: user_token, user_name: user_name, id_person: id_person });
+          navigation.replace('Home', { dataPerson: data }); // Pasar el objeto 'data' como parámetro
           navigation.replace('Perfil', { dataPerson: data }); // Pasar el objeto 'data' como parámetro
           navigation.replace('Progreso', { dataPerson: data }); // Pasar el objeto 'data' como parámetro
 
@@ -136,7 +140,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
   },
 });
-
+/*
 const App = () => {
   return (
     <Stack.Navigator>
@@ -144,8 +148,8 @@ const App = () => {
       <Stack.Screen name="Home" component={Home} />
     </Stack.Navigator>
   );
-};
+};*/
 
-export default App;
+export default RegisterScreen;
 
 

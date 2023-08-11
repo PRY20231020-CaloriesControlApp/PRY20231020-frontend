@@ -29,7 +29,7 @@ const App = () => {
   const [userName, setUserName] = useState('');
   const [personId, setPersonId] = useState('');
 
-  const handleLoginSuccess2 = (token, name, id) => {
+  const handleLoginSuccess3 = (token, name, id) => {
     setIsAuthenticated(true);
     setUserToken(token);
     setUserName(name);
@@ -39,9 +39,17 @@ const App = () => {
   const [dataPerson, setDataPerson] = useState({});
 
   const handleLoginSuccess = (data) => {
+    console.log("HOLISSSS Entre handleLoginSuccess")
     setIsAuthenticated(true);
     setDataPerson(data);
-    
+
+  };
+
+  const handleLoginSuccess2 = (data) => {
+    console.log("HOLAAAAAAA handleLoginSuccess2")
+    setIsAuthenticated(true);
+    setDataPerson(data);
+
   };
 
   return (
@@ -78,22 +86,57 @@ const App = () => {
             <Tab.Screen name="Home" component={HomeScreen} initialParams={{ dataPerson }} />
             {/* <Tab.Screen name="Home" component={HomeScreen} />*/}
 
-            <Tab.Screen name="Progreso" component={ProgressScreen} initialParams={{ dataPerson }}/>
+            <Tab.Screen name="Progreso" component={ProgressScreen} initialParams={{ dataPerson }} />
             <Tab.Screen name="Notificaciones" component={NotificationsScreen} />
-            <Tab.Screen name="Perfil" component={ProfileScreen} initialParams={{ dataPerson }}/>
+            <Tab.Screen name="Perfil" component={ProfileScreen} initialParams={{ dataPerson }} />
           </Tab.Navigator>
         ) : (
           <Stack.Navigator>
             <Stack.Screen name="Login">
               {(props) => (
                 <LoginScreen {...props} isAuthenticated={isAuthenticated} setIsAuthenticated={setIsAuthenticated} {...props} onLoginSuccess={handleLoginSuccess} />
-                
+
               )}
             </Stack.Screen>
-            <Stack.Screen name="Registro" component={RegisterScreen} />
-            <Stack.Screen name="Home" component={HomeScreen} initialParams={{dataPerson:'',}}/>
-            <Stack.Screen name="Perfil" component={ProfileScreen} initialParams={{dataPerson:'',}}/>
-            <Stack.Screen name="Progreso" component={ProgressScreen} initialParams={{dataPerson:'',}}/>
+            {/*<Stack.Screen name="Registro" component={RegisterScreen} />*/}
+            <Stack.Screen name="Registro">
+              {(props) => {
+                console.log("Props pasadas a RegisterScreen:", props); // Agregado console.log
+                return (
+                  <RegisterScreen
+                    {...props}
+                    onRegistrationComplete={handleLoginSuccess}
+                    handleLoginSuccess2={handleLoginSuccess2}
+                  />
+                );
+              }}
+            </Stack.Screen>
+
+            <Stack.Screen name="Home" component={HomeScreen} initialParams={{ dataPerson: '', }} />
+            {/*<Stack.Screen name="Perfil" component={ProfileScreen} initialParams={{dataPerson:'',}}  />*/}
+            {/* <Stack.Screen name="Perfil">
+              {(props) => (
+                <ProfileScreen
+                  {...props} // Pasa todas las props a ProfileScreen
+                  onLoginSuccess={handleLoginSuccess}
+                  initialParams={{ dataPerson: '' }} // Agrega los parámetros iniciales
+                />
+              )}
+              </Stack.Screen>*/}
+
+            <Stack.Screen name="Perfil">
+              {(props) => (
+                <ProfileScreen
+                  {...props} // Pasa todas las props a ProfileScreen
+                  onLoginSuccess={handleLoginSuccess}
+                  initialParams={{ dataPerson: '' }} // Agrega los parámetros iniciales
+                />
+              )}
+            </Stack.Screen>
+
+            <Stack.Screen name="Progreso" component={ProgressScreen} initialParams={{ dataPerson: '', }} />
+
+
 
 
           </Stack.Navigator>

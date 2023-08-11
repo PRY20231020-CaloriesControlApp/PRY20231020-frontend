@@ -7,9 +7,13 @@ import * as Font from 'expo-font';
 
 const blobStorageBaseUrl = 'https://pry20231020fnb6cf.blob.core.windows.net/';
 const containerName = 'pry20231020-dataset-ml';
-const blobName = '1.jpg';
+const blobName = '1';
+const blobtype = '.jpg';
 
-const imageUrl = `${blobStorageBaseUrl}${containerName}/${blobName}`;
+const imageUrl = `${blobStorageBaseUrl}${containerName}/${blobName}${blobtype}`;
+
+
+console.log('*****imageUrl  hHOLAAAAAA  ', imageUrl)
 
 const { width } = Dimensions.get('window');
 const windowWidth = Dimensions.get('window').width;
@@ -23,11 +27,7 @@ const HomeScreen = ({ route }) => {
   const personId = dataPerson.id_person;
   const userName = dataPerson.user_name;
   const userToken = dataPerson.token;
-  console.log("****personId *******: ", personId)
-  console.log("****userName 123*******: ", userName)
 
-  console.log("***INICIO  dataPerson.gender, dataPerson.weight, dataPerson.height, dataPerson.age, dataPerson.activity_factor")
-  console.log(dataPerson.gender, "  ", dataPerson.weight, "  ", dataPerson.height, " ", dataPerson.age, " ", dataPerson.activity_factor)
 
 
   const [selectedMeal, setSelectedMeal] = useState(null);
@@ -59,20 +59,27 @@ const HomeScreen = ({ route }) => {
     try {
       weight = parseFloat(weight);
       height = parseFloat(height);
-      age = parseFloat(age);
+      age = parseInt(age);
     } catch (error) {
       throw new Error('El peso, altura y edad deben ser números válidos.');
     }
 
     let tmb;
     if (gender === 'M') {
+      console.log("SOY HOMBRE ")
       tmb = 10 * weight + 6.25 * height - 5 * age + 5;
     } else {
+      console.log("SOY MUJER ")
+
       tmb = 10 * weight + 6.25 * height - 5 * age - 161;
     }
 
     const eta = tmb * PER_ETA;
     const net = (tmb + eta) * parseFloat(activity_factor);
+
+    console.log('weight ' + weight);
+    console.log('height ' + height);
+    console.log('age ' + age);
 
     console.log('tmb ' + tmb);
     console.log('PER_ETA ' + PER_ETA);
@@ -220,15 +227,17 @@ const HomeScreen = ({ route }) => {
             source={{ uri: imageUrl }} // Reemplazar 'URL_DE_LA_IMAGEN' con la URL de la imagen de la comida
             style={{ width: 150, height: 150, borderRadius: 75, marginBottom: 16 }}
           />
-          <Text style={[styles.subHeading, { color: '#FFA500', fontSize: 18 }]}>Ingredientes:</Text>
+          <Text style={[styles.subHeading, { color: '#FFA500', fontSize: 18 }]}>Ingredientes</Text>
+
           {selectedMeal.ingredients && selectedMeal.ingredients.length > 0 ? (
+
             <FlatList
               data={selectedMeal.ingredients}
               renderItem={({ item }) => (
                 <View style={styles.ingredientContainer}>
                   <Text style={styles.ingredientName}>{item.ingredient_name}</Text>
                   <Text style={styles.ingredientDetail}>
-                    Cantidad: {item.ingredient_weight} g | Calorías: {item.ingredient_calories}
+                    Cantidad: {item.ingredient_weight} g     |     Calorías: {item.ingredient_calories} kcal
                   </Text>
                 </View>
               )}
@@ -344,11 +353,6 @@ const HomeScreen = ({ route }) => {
     setCurrentDay(currentDayName);
     //handleOptionSelect('Desayuno', 1)
 
-
-
-
-
-
   }, []);
 
   const handleReload = (mealType) => {
@@ -378,7 +382,7 @@ const HomeScreen = ({ route }) => {
       token: "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJwZXJzb25pZCI6OCwidXN1YXJpbyI6InRpdCIsInJvbCI6ImFkbWluaXN0cmFkb3IifQ.CEZwB8CYTiQs4gb3DSWyZjmahYkt0hZOvNROw5tVGRqWKuzTMq9HWZbNG1ipnGZD1ESCHlcv1gtOT_bDvpPR77BvrAa5nyPx6zwSmTPcf708YusnGQdX_q6mJgFSmwjyElL8kMioIqvRGv9Sg1b6igZlahCkZ3p7oRtq5Oj5AwgfVwpRvHhbkD9LjWGbMmevQ3E-04IQEqMgbc_OrTj86flB1zuIIuGMwJ8ZpdQA6sl5SoDBOkiS7S8OfFyk1caWyPCE5a7bkNNHKmnr7mExPE4nu1VLftyQsmAmKj9GwnifO_lmYS81tN4jwyqIBL3RJn0Di-ZX5_a7bGt6QXx3BQ"
     };
 
-    fetch('https://pry20231020-fn.azurewebsites.net/api/HttpTrigger1', {
+    fetch('https://pry20231020-fn.azurewebsites.net/api/recommendation?', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -431,11 +435,18 @@ const HomeScreen = ({ route }) => {
 
 
   const recordProgress = (consumed_date, consumed_calories) => {
+    console.log ("*** recordProgress ")
+    console.log ("personId ",personId)
+    console.log ("consumed_date ",consumed_date)
+    console.log ("consumed_calories ",consumed_calories)
+
+
 
     const datos = {
       person_id: personId,// currentDay
       consumed_date: consumed_date,//"Desayuno",//--
-      consumed_calories: consumed_calories
+      consumed_calories: consumed_calories,
+      weight: dataPerson.weight
     };
 
     fetch('https://pry20231020-fn.azurewebsites.net/api/progress?', {
@@ -503,7 +514,14 @@ const HomeScreen = ({ route }) => {
     return (
       <View style={styles.mealItem}>
         <View style={styles.mealItemContent}>
+          <View style={[styles.circleImage, { marginRight: 10 }]}>
+            <Image
+              source={{ uri: `${blobStorageBaseUrl}${containerName}/${item.id}M${blobtype}` }}
+              style={{ width: 40, height: 40, borderRadius: 20 }}
+            />
+          </View>
           <View style={styles.leftColumn}>
+
             <Text style={styles.mealName}>{item.name}</Text>
             <Text style={styles.mealInfo}>{item.calories} kcal</Text>
           </View>
@@ -529,25 +547,36 @@ const HomeScreen = ({ route }) => {
 
     return (
       <View style={styles.categoryContainer}>
+
         <View style={styles.categoryHeader}>
           <Text style={styles.subHeading}>{mealType}</Text>
           <Ionicons name="md-refresh" size={24} color="#FFA500" onPress={() => handleReload(mealType)} />
         </View>
         <ScrollView horizontal>
+
           <FlatList data={data} renderItem={renderMealItem} keyExtractor={(item) => item.id} />
+
         </ScrollView>
 
         {/* Modal */}
         <Modal visible={modalVisible[mealType] || false} animationType="slide">
-          <View style={styles.modalContainer}>
-            <Text style={styles.modalTitle}>Seleccione una opción</Text>
-            {options.map((option) => (
-              <Button key={option.id} title={option.name} onPress={() => handleOptionSelect(mealType, option.id)} />
-            ))}
-            <Button title="Cancelar" onPress={() => setModalVisible((prevState) => ({ ...prevState, [mealType]: false }))} />
-
+          <View style={styles.modalContainerGroup}>
+            <Text style={styles.modalTitleGroup}>Seleccione la opción de su preferencia</Text>
+            <View style={styles.buttonContainerGroup}>
+              {options.map((option) => (
+                <TouchableOpacity key={option.id} style={styles.buttonGroup} onPress={() => handleOptionSelect(mealType, option.id)}>
+                  {/* <Image source={{ uri: imageUrl }} style={styles.optionImageGroup} />*/}
+                  <Text style={styles.buttonTextGroup}>{option.name}</Text>
+                </TouchableOpacity>
+              ))}
+              <TouchableOpacity style={styles.buttonGroup} onPress={() => setModalVisible((prevState) => ({ ...prevState, [mealType]: false }))}>
+                <Text style={styles.buttonTextGroup}>Cancelar</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </Modal>
+
+
       </View>
     );
   };
@@ -558,34 +587,33 @@ const HomeScreen = ({ route }) => {
     return null;
   };
 
-  // Calculate Net Calories
-  console.log('dataPerson.gender, dataPerson.weight, dataPerson.height, dataPerson.age, dataPerson.activity_factor');
-  console.log(dataPerson.gender, '  ', dataPerson.weight, '  ', dataPerson.height, ' ', dataPerson.age, ' ', dataPerson.activity_factor);
-
+  
   const netCalories = calculateNet(dataPerson.gender, dataPerson.weight, dataPerson.height, dataPerson.age, dataPerson.activity_factor);
 
   // Calculate IMC
   const [imc, imcCategory, imcScale] = calculateIMC(dataPerson.height, dataPerson.weight);
-  console.log('************IMC: ', imc, 'IMC Category: ', imcCategory, 'IMC Scale: ', imcScale);
 
   // Calculate Percentage Caloric Reduction
   const percentageCaloricReduction = obtainPercentageCaloricReduction(imcScale, dataPerson.caloric_reduction);
-  console.log('Percentage Caloric Reduction: ', percentageCaloricReduction);
 
   // Calculate Total Calories
   const totalCalories = calculateTotalCalories(netCalories, percentageCaloricReduction);
-  console.log('*****Total Calories: ', totalCalories);
   const totalConsumedCalories = selectedMeals.reduce((total, meal) => total + meal.calories, 0);
   const caloricReduction = Math.round(netCalories - totalConsumedCalories)
 
-  console.log('*****CALORIES REDUCCION POR DIA : ', caloricReduction);
   const currentDate = getCurrentDate();
   const currentTime = getCurrentTime();
-  console.log('*****currentTime*** : ', currentTime);
 
+  console.log('*****###netCalories*** : ', netCalories);
+  console.log('*****###imcScale*** : ', imcScale, "  " ,imc);
+  console.log('*****###percentageCaloricReduction*** : ', percentageCaloricReduction);
 
-  if (currentTime === '18:53') {
-    console.log('entre a funcion if current')
+  console.log('*****###totalConsumedCalories*** : ', totalConsumedCalories);
+  console.log('*****## totalCalories*** : ', totalCalories);
+
+  //if (currentTime === '18:53') {
+  if (totalConsumedCalories == totalCalories) {
+    console.log('HOLIIIIIII entre a funcion if current')
     recordProgress(currentDate, caloricReduction);
   }
 
@@ -705,10 +733,11 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#F2F2F2',
     paddingHorizontal: 16,
     paddingTop: 32,
     paddingBottom: 16,
+
   },
   modalTitle: {
     fontSize: 24,
@@ -719,24 +748,39 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 8,
+
   },
   ingredientContainer: {
-    marginBottom: 16,
+    width: '100%',
+    paddingLeft: 30,
+    paddingRight: 30,
+    paddingTop: 10,
+
+    paddingBottom: 10,
+
+    backgroundColor: 'white',
+
+
+
   },
   ingredientName: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#FFA500',
+    color: 'black',
     marginBottom: 8,
+
   },
   ingredientDetail: {
-    color: '#FFA500',
+    color: 'black',
     textAlign: 'center',
+
   },
   flatlistContentContainer: {
     flexGrow: 1,
     justifyContent: 'center',
     paddingHorizontal: 16,
+
+
   },
   closeButton: {
     backgroundColor: '#FFA500',
@@ -750,6 +794,59 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
   },
+  circleImage: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: 'lightgray', // Color de fondo del círculo
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  modalContainerGroup: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#F2F2F2',
+    paddingHorizontal: 16,
+    paddingTop: 32,
+    paddingBottom: 16,
+  },
+  modalTitleGroup: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 16,
+    color: '#333', // Color del título
+  },
+  buttonContainerGroup: {
+    width: '100%',
+    alignItems: 'center', // Centrar los botones horizontalmente
+    marginTop: 20, // Espacio entre el título y los botones
+  },
+  buttonGroup: {
+    backgroundColor: '#FFA500', // Color naranja
+    borderRadius: 10,
+    padding: 10,
+    alignItems: 'center',
+    width: '80%', // Ancho de los botones
+    marginBottom: 10, // Espacio entre los botones
+  },
+  buttonTextGroup: {
+    color: 'white', // Texto blanco
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  optionRowGroup: {
+    flexDirection: 'row', // Alinea la imagen y el texto en fila
+    alignItems: 'center', // Centra verticalmente
+  },
+  optionImageGroup: {
+    width: 50, // Ajusta el tamaño de la imagen según tu diseño
+    height: 50,
+    borderRadius: 10, // La mitad del tamaño
+    marginRight: 10, // Espacio entre la imagen y el texto
+  },
+
 });
 
 export default HomeScreen;
