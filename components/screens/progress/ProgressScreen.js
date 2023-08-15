@@ -54,12 +54,12 @@ const ProgressScreen = ({ route, navigation }) => {
           maxValue={10000}
           radius={80}
           duration={2000}
-          progressValueColor={'#FFA500'}
+          progressValueColor={'#FDA615'}
           title={'kcal'}
-          titleColor={'#FFA500'}
+          titleColor={'#FDA615'}
           titleStyle={{ fontWeight: 'bold' }}
           textStyle={{ fontWeight: 'bold' }}
-          activeStrokeColor={'#FFA500'}
+          activeStrokeColor={'#FDA615'}
           inActiveStrokeColor={'#FFFFFF'}
         />
         <Text style={styles.circularProgressText}>Progreso calórico</Text>
@@ -96,7 +96,7 @@ const styles = StyleSheet.create({
   headerText: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#FFA500', // Color naranja
+    color: '#FDA615', // Color naranja
   },
   statsContainer: {
     flexDirection: 'row',
@@ -134,7 +134,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     marginTop: 10,
-    color: '#FFA500', // Color naranja
+    color: '#FDA615', // Color naranja
   },
   dailyProgressContainer: {
     width: '90%',
@@ -173,7 +173,7 @@ const styles = StyleSheet.create({
   },
   caloriesText: {
     fontSize: 16,
-    color: '#FFA500', // Color naranja
+    color: '#FDA615', // Color naranja
     fontWeight: 'bold',
   },
   dateText: {

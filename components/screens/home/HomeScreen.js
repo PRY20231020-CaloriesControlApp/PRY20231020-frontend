@@ -1,24 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Button, Modal, Dimensions, ScrollView, FlatList, Switch, Image, TouchableOpacity } from 'react-native';
 import CircularProgress from 'react-native-circular-progress-indicator';
-import Checkbox from 'expo-checkbox';
 import { Ionicons } from '@expo/vector-icons';
 import * as Font from 'expo-font';
-
 const blobStorageBaseUrl = 'https://pry20231020fnb6cf.blob.core.windows.net/';
 const containerName = 'pry20231020-dataset-ml';
 const blobName = '1';
 const blobtype = '.jpg';
-
 const imageUrl = `${blobStorageBaseUrl}${containerName}/${blobName}${blobtype}`;
-
-
 console.log('*****imageUrl  hHOLAAAAAA  ', imageUrl)
-
 const { width } = Dimensions.get('window');
 const windowWidth = Dimensions.get('window').width;
-
-
 const HomeScreen = ({ route }) => {
   // const { userToken, userName, personId } = route.params;
   const { dataPerson } = route.params; // Obtener el objeto 'data' de los parámetros
@@ -188,12 +180,10 @@ const HomeScreen = ({ route }) => {
     { id: 3, name: 'Menestras' },
     { id: 4, name: 'Pastas' },
     { id: 5, name: 'Arroces' },
-    { id: 6, name: 'Sopas y Caldos' },
     { id: 7, name: 'Pollos' },
   ];
 
   const dinnerOptions = [
-    { id: 1, name: 'Sopas y Caldos' },
     { id: 2, name: 'Pollo' },
     { id: 3, name: 'Carnes' },
     { id: 4, name: 'Pastas' },
@@ -219,7 +209,7 @@ const HomeScreen = ({ route }) => {
     return (
       <Modal visible={modalIngredientesVisible} animationType="slide">
         <View style={styles.modalContainer}>
-          <Text style={[styles.modalTitle, { color: '#FFA500', fontSize: 20, fontWeight: 'bold' }]}>
+          <Text style={[styles.modalTitle, { color: '#FDA615', fontSize: 20, fontWeight: 'bold' }]}>
             {selectedMeal.name}
           </Text>
           {/* Agregar aquí la imagen de la comida */}
@@ -227,7 +217,7 @@ const HomeScreen = ({ route }) => {
             source={{ uri: imageUrl }} // Reemplazar 'URL_DE_LA_IMAGEN' con la URL de la imagen de la comida
             style={{ width: 150, height: 150, borderRadius: 75, marginBottom: 16 }}
           />
-          <Text style={[styles.subHeading, { color: '#FFA500', fontSize: 18 }]}>Ingredientes</Text>
+          <Text style={[styles.subHeading, { color: '#FDA615', fontSize: 18 }]}>Ingredientes</Text>
 
           {selectedMeal.ingredients && selectedMeal.ingredients.length > 0 ? (
 
@@ -245,7 +235,7 @@ const HomeScreen = ({ route }) => {
               contentContainerStyle={styles.flatlistContentContainer}
             />
           ) : (
-            <Text style={{ color: '#FFA500' }}>No hay ingredientes disponibles.</Text>
+            <Text style={{ color: '#FDA615' }}>No hay ingredientes disponibles.</Text>
           )}
           <TouchableOpacity
             style={styles.closeButton}
@@ -533,7 +523,7 @@ const HomeScreen = ({ route }) => {
             <Ionicons
               name="add-circle-outline" // Cambio de "md-more" a "add-circle-outline"
               size={24}
-              color="#FFA500"
+              color="#FDA615"
               onPress={() => mostrarModalIngredientes(item)}
             />
           </View>
@@ -550,7 +540,7 @@ const HomeScreen = ({ route }) => {
 
         <View style={styles.categoryHeader}>
           <Text style={styles.subHeading}>{mealType}</Text>
-          <Ionicons name="md-refresh" size={24} color="#FFA500" onPress={() => handleReload(mealType)} />
+          <Ionicons name="md-refresh" size={24} color="#FDA615" onPress={() => handleReload(mealType)} />
         </View>
         <ScrollView horizontal>
 
@@ -629,12 +619,12 @@ const HomeScreen = ({ route }) => {
             maxValue={totalCalories}
             radius={80}
             duration={2000}
-            progressValueColor={'#FFA500'}
+            progressValueColor={'#FDA615'}
             title={'kcal'}
-            titleColor={'#FFA500'}
+            titleColor={'#FDA615'}
             titleStyle={{ fontWeight: 'bold' }}
             textStyle={{ fontWeight: 'bold' }}
-            activeStrokeColor={'#FFA500'}
+            activeStrokeColor={'#FDA615'}
             inActiveStrokeColor={'#FFFFFF'}
           />
 
@@ -722,7 +712,7 @@ const styles = StyleSheet.create({
   progressText: {
     fontSize: 16,
     marginTop: 8,
-    color: '#FFA500',
+    color: '#FDA615',
     fontWeight: 'bold',
   },
   modalContainer: {
@@ -774,7 +764,7 @@ const styles = StyleSheet.create({
 
   },
   closeButton: {
-    backgroundColor: '#FFA500',
+    backgroundColor: '#FDA615',
     borderRadius: 20,
     paddingHorizontal: 20,
     paddingVertical: 10,
@@ -815,7 +805,7 @@ const styles = StyleSheet.create({
     marginTop: 20, // Espacio entre el título y los botones
   },
   buttonGroup: {
-    backgroundColor: '#FFA500', // Color naranja
+    backgroundColor: '#FDA615', // Color naranja
     borderRadius: 10,
     padding: 10,
     alignItems: 'center',

@@ -2,13 +2,13 @@ import React, { useState } from 'react';
 import { View, TextInput, TouchableOpacity, Text, StyleSheet, Image } from 'react-native';
 
 
-const LoginScreen = ({ navigation, isAuthenticated, setIsAuthenticated, route, onLoginSuccess }) => {
+const LoginScreen = ({ navigation, onLoginSuccess }) => {
 
 
   const blobStorageBaseUrl = 'https://pry20231020fnb6cf.blob.core.windows.net/';
   const containerName = 'pry20231020-dataset-ml';
-  const blobName = '1';
-  const blobtype = '.jpg';
+  const blobName = 'logoApp';
+  const blobtype = '.png';
 
   const imageUrl = `${blobStorageBaseUrl}${containerName}/${blobName}${blobtype}`;
   const [email, setEmail] = useState('');
@@ -46,16 +46,9 @@ const LoginScreen = ({ navigation, isAuthenticated, setIsAuthenticated, route, o
          onLoginSuccess(data);
 
 
-          //navigation.replace('Home', { user_token: user_token, user_name: user_name, id_person: id_person });
-          navigation.replace('Home', { dataPerson: data }); // Pasar el objeto 'data' como parámetro
+          navigation.replace('Inicio', { dataPerson: data }); // Pasar el objeto 'data' como parámetro
           navigation.replace('Perfil', { dataPerson: data }); // Pasar el objeto 'data' como parámetro
           navigation.replace('Progreso', { dataPerson: data }); // Pasar el objeto 'data' como parámetro
-
-
-
-
-
-
         } else {
           console.log('Error en la solicitud de inicio de sesión');
         }
@@ -71,16 +64,7 @@ const LoginScreen = ({ navigation, isAuthenticated, setIsAuthenticated, route, o
 
   return (
     <View style={styles.container}>
-      <View style={styles.appTitleContainer}>
-        <Text style={styles.appTitle}>NutriSage</Text>
-      </View>
-
-      <View style={styles.logoContainer}>
-        <Image
-          source={{ uri: imageUrl }} // URL de la imagen
-          style={styles.logo}
-        />
-      </View>
+     
 
       <TextInput
         placeholder="Usuario"
@@ -98,9 +82,9 @@ const LoginScreen = ({ navigation, isAuthenticated, setIsAuthenticated, route, o
       <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
         <Text style={styles.loginButtonText}>Iniciar sesión</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.registerButton} onPress={handleRegister}>
+     {/* <TouchableOpacity style={styles.registerButton} onPress={handleRegister}>
         <Text style={styles.registerButtonText}>Registrarse</Text>
-      </TouchableOpacity>
+  </TouchableOpacity>*/}
     </View>
   );
 };
@@ -111,25 +95,29 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#FFA500',
+    backgroundColor: '#F2F2F2',
   },
   input: {
-    width: '80%',
+    width: '70%',
     height: 40,
     backgroundColor: '#FFFFFF',
     marginBottom: 20,
     paddingHorizontal: 10,
     borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#FDA615',
   },
   loginButton: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#FDA615',
+    
     paddingHorizontal: 20,
     paddingVertical: 10,
     borderRadius: 8,
-    marginBottom: 10,
+    marginTop: 30,
+
   },
   loginButtonText: {
-    color: '#FFA500',
+    color: '#FFFFFF',
     fontSize: 16,
     fontWeight: 'bold',
   },
@@ -140,7 +128,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   registerButtonText: {
-    color: '#FFA500',
+    color: '#FDA615',
     fontSize: 16,
     fontWeight: 'bold',
   },
@@ -157,10 +145,10 @@ const styles = StyleSheet.create({
     marginVertical: 20,
   },
   logo: {
-    width: 200,
-    height: 200,
+    width: 250,
+    height: 250,
     resizeMode: 'contain', // Ajusta el modo de escalado de la imagen
-    borderRadius: 100, // Mitad del ancho y altura para hacerlo circular
+    backgroundColor: 'white',
 
   }
 });

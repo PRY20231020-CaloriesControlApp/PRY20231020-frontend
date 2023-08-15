@@ -9,9 +9,9 @@ const RegisterStepOne = ({ onNext , formData, setFormData }) => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
+      {/*<View style={styles.header}>
         <Text style={styles.headerText}>Registro - Paso 1</Text>
-      </View>
+  </View>*/}
       <View style={styles.formContainer}>
         <View style={styles.inputContainer}>
           <Text style={styles.label}>Nombre</Text>
@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
   },
   header: {
-    backgroundColor: '#FFA500',
+    backgroundColor: '#FDA615',
     padding: 16,
     alignItems: 'center',
     justifyContent: 'center',
@@ -108,7 +108,7 @@ const styles = StyleSheet.create({
   input: {
     height: 40,
     borderWidth: 1,
-    borderColor: '#FFA500',
+    borderColor: '#FDA615',
     paddingHorizontal: 10,
     borderRadius: 8,
     //alignItems: 'center', // Centrar verticalmente el contenido
@@ -120,12 +120,12 @@ const styles = StyleSheet.create({
    justifyContent: 'space-between',
     paddingHorizontal: 16,
     marginTop: 20,
-    marginBottom:20,
+    marginBottom:40,
     justifyContent: 'center',
   },
   nextButton: {
     width: '50%',
-    backgroundColor: '#FFA500',
+    backgroundColor: '#FDA615',
     paddingHorizontal: 20,
     paddingVertical: 10,
     borderRadius: 8,

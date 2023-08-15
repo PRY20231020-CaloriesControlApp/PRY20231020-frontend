@@ -4,15 +4,10 @@ import { View, Text, StyleSheet, Image, TouchableOpacity, Modal, TextInput, Aler
 import { FontAwesome } from '@expo/vector-icons';
 import { SelectList } from 'react-native-dropdown-select-list'
 
+  const ProfileScreen = ({ navigation, route, updateDataPerson }) => {
 
-
-///const ProfileScreen = ({ route, navigation, onLoginSuccess }) => {
-
-const ProfileScreen = ({ navigation, route, updateDataPerson }) => {
 
   const { dataPerson } = route.params;
-
-
 
   const personId = dataPerson.id_person;
   const blobStorageBaseUrl = 'https://pry20231020fnb6cf.blob.core.windows.net/';
@@ -65,11 +60,7 @@ const ProfileScreen = ({ navigation, route, updateDataPerson }) => {
           text: 'Cerrar Sesión',
           style: 'destructive',
           onPress: () => {
-            // Realiza la acción de cerrar sesión aquí, por ejemplo, limpiar los datos de autenticación
-
-            // Ahora realiza la navegación de 'RESET' al componente LoginScreen
-            //navigation.replace('Home', { dataPerson: data }); // Pasar el objeto 'data' como parámetro
-
+            route.params.logOutSuccess(); 
           },
         },
       ],
@@ -157,13 +148,10 @@ const ProfileScreen = ({ navigation, route, updateDataPerson }) => {
         style={styles.editIconContainer}
         onPress={toggleEditModal}
       >
-        <FontAwesome name="edit" size={24} color="#FFA500" />
+        <FontAwesome name="edit" size={24} color="#FDA615" />
       </TouchableOpacity>
 
-      {/* Botón para ver progreso */}
-
-
- 
+      {/* Botón para ver progreso */} 
 
       <Modal
         visible={isEditModalVisible}
@@ -204,7 +192,7 @@ const ProfileScreen = ({ navigation, route, updateDataPerson }) => {
                 boxStyles={{
                   width: '100%',
                   borderWidth: 1,
-                  borderColor: '#FFA500',
+                  borderColor: '#FDA615',
                   borderRadius: 8,
                 }}
                 setSelected={(key) => {
@@ -255,7 +243,7 @@ const ProfileScreen = ({ navigation, route, updateDataPerson }) => {
                 boxStyles={{
                   width: '100%',
                   borderWidth: 1,
-                  borderColor: '#FFA500',
+                  borderColor: '#FDA615',
                   borderRadius: 8,
                 }}
               />
@@ -367,7 +355,7 @@ const styles = StyleSheet.create({
     width: 150,
     height: 150,
     borderRadius: 75,
-    borderColor: '#FFA500',
+    borderColor: '#FDA615',
     borderWidth: 4,
     marginBottom: 10,
   },
@@ -407,7 +395,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   button: {
-    backgroundColor: '#FFA500',
+    backgroundColor: '#FDA615',
     borderRadius: 10,
     paddingVertical: 10,
     paddingHorizontal: 20,
@@ -458,13 +446,13 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     paddingHorizontal: 10,
     textAlign: 'left', // Alinear a la izquierda
-    borderColor: '#FFA500',
+    borderColor: '#FDA615',
     paddingHorizontal: 10,
     borderRadius: 8,
 
   },
   saveButton: {
-    backgroundColor: '#FFA500',
+    backgroundColor: '#FDA615',
     borderRadius: 10,
     paddingVertical: 10,
     paddingHorizontal: 20,
@@ -482,7 +470,7 @@ const styles = StyleSheet.create({
     right: 20,
   },
   logoutButtonText: {
-    color: '#FFA500',
+    color: '#FDA615',
     fontSize: 16,
     fontWeight: 'bold',
   },

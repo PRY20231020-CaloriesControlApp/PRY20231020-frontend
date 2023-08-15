@@ -16,10 +16,10 @@ const RegisterStepTwo = ({ onNext, onPrevious, formData, setFormData }) => {
   const [weight, setWeight] = useState('');
 
   const handleNext = () => {
-    /*if (!birthdate || !gender || !height || !weight) {
+    if (!birthdate || !gender || !height || !weight) {
       Alert.alert('¡Atención!', 'Por favor, completa todos los campos obligatorios');
       return;
-    }*/
+    }
 
     onNext();
   };
@@ -83,9 +83,9 @@ const RegisterStepTwo = ({ onNext, onPrevious, formData, setFormData }) => {
   ];
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
+     {/* <View style={styles.header}>
         <Text style={styles.headerText}>Registro - Paso 2</Text>
-      </View>
+  </View>*/}
       <View style={styles.formContainer}>
 
 
@@ -120,7 +120,7 @@ const RegisterStepTwo = ({ onNext, onPrevious, formData, setFormData }) => {
             boxStyles={{
               width: '100%',
               borderWidth: 1,
-              borderColor: '#FFA500',
+              borderColor: '#FDA615',
               borderRadius: 8,
             }}
             setSelected={(key) => {
@@ -164,7 +164,7 @@ const RegisterStepTwo = ({ onNext, onPrevious, formData, setFormData }) => {
             boxStyles={{
               width: '100%',
               borderWidth: 1,
-              borderColor: '#FFA500',
+              borderColor: '#FDA615',
               borderRadius: 8,
             }}
             setSelected={(key) => {
@@ -200,7 +200,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
   },
   header: {
-    backgroundColor: '#FFA500',
+    backgroundColor: '#FDA615',
     padding: 16,
     alignItems: 'center',
     justifyContent: 'center',
@@ -228,7 +228,7 @@ const styles = StyleSheet.create({
   input: {
     height: 45,
     borderWidth: 1,
-    borderColor: '#FFA500',
+    borderColor: '#FDA615',
     paddingHorizontal: 20,
     borderRadius: 8,
    // alignItems: 'center', // Centrar verticalmente el contenido
@@ -238,7 +238,7 @@ const styles = StyleSheet.create({
   inputDate: {
     height: 45,
     borderWidth: 1,
-    borderColor: '#FFA500',
+    borderColor: '#FDA615',
     paddingHorizontal: 20,
     borderRadius: 8,
     flexDirection: 'row', // Para alinear verticalmente el contenido
@@ -249,7 +249,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 16,
     marginTop: 20,
-    marginBottom:20,
+    marginBottom:40,
   },
   backButton: {
     backgroundColor: '#CCCCCC',
@@ -266,7 +266,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   nextButton: {
-    backgroundColor: '#FFA500',
+    backgroundColor: '#FDA615',
     paddingHorizontal: 20,
     paddingVertical: 10,
     borderRadius: 8,
@@ -282,7 +282,7 @@ const styles = StyleSheet.create({
   pickerContainer: {
     height: 40,
     borderWidth: 1,
-    borderColor: '#FFA500',
+    borderColor: '#FDA615',
     borderRadius: 8,
     overflow: 'hidden',
   },
@@ -292,7 +292,8 @@ const styles = StyleSheet.create({
   pickerItem: {
     height: 40,
     textAlignVertical: 'center',
-  }
+  },
+ 
 });
 
 export default RegisterStepTwo;

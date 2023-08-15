@@ -12,6 +12,9 @@ import HomeScreen from './components/screens/home/HomeScreen';
 import ProgressScreen from './components/screens/progress/ProgressScreen';
 import NotificationsScreen from './components/screens/notifications/NotificationsScreen';
 import ProfileScreen from './components/screens/profile/ProfileScreen';
+import ChoiceScreen from './components/screens/intro/ChoiceScreen';
+import WelcomeScreen from './components/screens/intro/WelcomeScreen';
+
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -21,7 +24,7 @@ const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
 
-  
+
 
   const [dataPerson, setDataPerson] = useState({});
 
@@ -45,13 +48,21 @@ const App = () => {
 
   };
 
+  const logOutSuccess = () => {
+    console.log("logOutSuccess")
+    setIsAuthenticated(false);
+    setDataPerson({});
+
+  };
+
+
   return (
     <View style={styles.container}>
       <NavigationContainer>
         {isAuthenticated ? (
           <Tab.Navigator name='MainTab'
             screenOptions={({ route }) => ({
-              tabBarActiveTintColor: '#FFA500',
+              tabBarActiveTintColor: '#FDA615',
               tabBarStyle: {
                 display: 'flex',
               },
@@ -81,17 +92,61 @@ const App = () => {
 
             <Tab.Screen name="Progreso" component={ProgressScreen} initialParams={{ dataPerson }} />
             <Tab.Screen name="Notificaciones" component={NotificationsScreen} />
-            <Tab.Screen name="Perfil" component={ProfileScreen} initialParams={{ dataPerson }} />
+            {/* <Tab.Screen name="Perfil" component={ProfileScreen} initialParams={{ dataPerson }} />*/}
+
+            <Tab.Screen
+              name="Perfil"
+              component={ProfileScreen}
+              initialParams={{
+                dataPerson: dataPerson,
+                logOutSuccess: logOutSuccess, // Aquí pasas la función logOutSuccess
+              }}
+            />
           </Tab.Navigator>
         ) : (
-          <Stack.Navigator>
-            <Stack.Screen name="Login">
-              {(props) => (
-                <LoginScreen {...props} isAuthenticated={isAuthenticated} setIsAuthenticated={setIsAuthenticated} {...props} onLoginSuccess={handleLoginSuccess} />
 
+          <Stack.Navigator>
+            <Stack.Screen name="Bienvenida" component={WelcomeScreen} options={{ headerShown: false }} />
+            <Stack.Screen name="ChoiceScreen" component={ChoiceScreen} options={{ headerShown: false }} />
+
+            {/*  <Stack.Screen name="Login">
+              {(props) => (
+                <LoginScreen {...props} onLoginSuccess={handleLoginSuccess} />
+              )}
+              </Stack.Screen>*/}
+            <Stack.Screen
+              name="Login"
+              options={{
+                title: 'Inicio de Sesión',
+                headerStyle: {
+                  backgroundColor: '#FDA615', // Fondo naranja para el encabezado
+
+                },
+                headerTintColor: 'white', // Color de las letras en el encabezado
+                headerTitleStyle: {
+                  fontSize: 22, // Ajustar el tamaño de la fuente aquí
+                },
+              }}
+            >
+              {(props) => (
+                <LoginScreen {...props} onLoginSuccess={handleLoginSuccess} />
               )}
             </Stack.Screen>
-            <Stack.Screen name="Registro">
+
+
+            <Stack.Screen name="Registro"
+            options={{
+              title: 'Registrarse',
+              headerStyle: {
+                backgroundColor: '#FDA615', // Fondo naranja para el encabezado
+
+              },
+              headerTintColor: 'white', // Color de las letras en el encabezado
+              headerTitleStyle: {
+                fontSize: 22, // Ajustar el tamaño de la fuente aquí
+              },
+            }}
+            >
               {(props) => {
                 return (
                   <RegisterScreen
@@ -102,18 +157,21 @@ const App = () => {
                 );
               }}
             </Stack.Screen>
-            <Stack.Screen name="Home" component={HomeScreen} initialParams={{ dataPerson: '', }} />
+            <Stack.Screen name="Inicio" component={HomeScreen} initialParams={{ dataPerson: '', }} />
+            {/*  <Stack.Screen
+              name="Perfil"
+              component={ProfileScreen}
+              initialParams={{ dataPerson: '' }}
+              updateDataPerson={updateProfile}
+
+            />*/}
             <Stack.Screen name="Perfil">
-              {(props) => {
-                return (
-                  <ProfileScreen
-                    {...props}
-                    initialParams={{ dataPerson: '' }}
-                    updateDataPerson={updateProfile} 
-                  />
-                );
-              }}
+              {(props) => (
+                <ProfileScreen {...props} initialParams={{ dataPerson: '' }} updateDataPerson={updateProfile} logOutSuccess={logOutSuccess} />
+              )}
             </Stack.Screen>
+
+
             <Stack.Screen name="Progreso" component={ProgressScreen} initialParams={{ dataPerson: '', }} />
           </Stack.Navigator>
         )}
@@ -125,7 +183,7 @@ const App = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFA500',
+    backgroundColor: '#FDA615',
     justifyContent: 'center',
   },
 });
