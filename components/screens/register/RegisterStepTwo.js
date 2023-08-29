@@ -16,8 +16,14 @@ const RegisterStepTwo = ({ onNext, onPrevious, formData, setFormData }) => {
   const [weight, setWeight] = useState('');
 
   const handleNext = () => {
-    if (!birthdate || !gender || !height || !weight) {
-      Alert.alert('¡Atención!', 'Por favor, completa todos los campos obligatorios');
+    console.log ('formData.birth_date ',formData.birth_date)
+    console.log ('formData.gender ',formData.gender)
+    console.log ('formData.height ',formData.height)
+    console.log ('formData.weight ',formData.weight)
+    console.log ('formData.activity_factor ',formData.activity_factor)
+
+    if (formData.birth_date=='' || formData.gender=='' || formData.height=='' || formData.weight==''||formData.activity_factor=='') {
+      Alert.alert('¡Atención!', 'Por favor, completa todos los campos.');
       return;
     }
 
@@ -59,16 +65,7 @@ const RegisterStepTwo = ({ onNext, onPrevious, formData, setFormData }) => {
     const day = String(date.getUTCDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
   };
-  /*
-    const formatDate = (date) => {
-      const options = {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        timeZone: 'UTC', // Establece la zona horaria en UTC
-      };
-      return new Date(date).toLocaleDateString('es', options);
-    };*/
+ 
   const genderOptions = [
     { key: 'F', value: 'Femenino' },
     { key: 'M', value: 'Masculino' },
@@ -79,11 +76,11 @@ const RegisterStepTwo = ({ onNext, onPrevious, formData, setFormData }) => {
     { key: 1.8, value: 'Moderado' },
     { key: 2.2, value: 'Activo' },
 
- 
+
   ];
   return (
     <View style={styles.container}>
-     {/* <View style={styles.header}>
+      {/* <View style={styles.header}>
         <Text style={styles.headerText}>Registro - Paso 2</Text>
   </View>*/}
       <View style={styles.formContainer}>
@@ -110,10 +107,6 @@ const RegisterStepTwo = ({ onNext, onPrevious, formData, setFormData }) => {
             onChange={onChange}
           />
         )}
-
-
-
-
         <View style={styles.inputContainer}>
           <Text style={styles.label}>Sexo</Text>
           <SelectList
@@ -138,10 +131,7 @@ const RegisterStepTwo = ({ onNext, onPrevious, formData, setFormData }) => {
         <View style={styles.inputContainer}>
           <Text style={styles.label}>Estatura (cm)</Text>
           <TextInput
-            //placeholder="Estatura (cm)"
             style={styles.input}
-            //value={height}
-            //onChangeText={setHeight}
             keyboardType="numeric"
             value={formData.height.toString()} // Mantén el número tal como está
             onChangeText={(value) => setFormData({ ...formData, height: parseInt(value) })} // Convierte el valor a entero antes de almacenarlo en el estado
@@ -231,8 +221,8 @@ const styles = StyleSheet.create({
     borderColor: '#FDA615',
     paddingHorizontal: 20,
     borderRadius: 8,
-   // alignItems: 'center', // Centrar verticalmente el contenido
-  //  justifyContent: 'center', // Centrar horizontalmente el contenido
+    // alignItems: 'center', // Centrar verticalmente el contenido
+    //  justifyContent: 'center', // Centrar horizontalmente el contenido
 
   },
   inputDate: {
@@ -249,7 +239,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 16,
     marginTop: 20,
-    marginBottom:40,
+    marginBottom: 40,
   },
   backButton: {
     backgroundColor: '#CCCCCC',
@@ -293,7 +283,7 @@ const styles = StyleSheet.create({
     height: 40,
     textAlignVertical: 'center',
   },
- 
+
 });
 
 export default RegisterStepTwo;

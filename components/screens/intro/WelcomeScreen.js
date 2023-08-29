@@ -12,7 +12,7 @@ const WelcomeScreen = ({ navigation }) => {
     useEffect(() => {
         const timer = setTimeout(() => {
             navigation.navigate('ChoiceScreen');
-        }, 3000);
+        }, 2000);
         return () => clearTimeout(timer);
     }, []);
 

@@ -1,12 +1,17 @@
 import React, { useState } from 'react';
-import { View, TextInput, TouchableOpacity, Text, StyleSheet, Image } from 'react-native';
+import { View, TextInput, TouchableOpacity, Text, StyleSheet, Image,Alert  } from 'react-native';
+import {
+  API_LOGIN_URL,
+  BLOB_STORAGE_BASE_URL,
+  CONTAINER_NAME
+} from '../../../constants/apiConstants'; 
 
 
 const LoginScreen = ({ navigation, onLoginSuccess }) => {
 
 
-  const blobStorageBaseUrl = 'https://pry20231020fnb6cf.blob.core.windows.net/';
-  const containerName = 'pry20231020-dataset-ml';
+  const blobStorageBaseUrl = BLOB_STORAGE_BASE_URL;
+  const containerName = CONTAINER_NAME;
   const blobName = 'logoApp';
   const blobtype = '.png';
 
@@ -21,7 +26,7 @@ const LoginScreen = ({ navigation, onLoginSuccess }) => {
 
     };
 
-    fetch('https://pry20231020-fn.azurewebsites.net/api/login', {
+    fetch(API_LOGIN_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json', // Cambio 'application/x-www-form-urlencoded' a 'application/json'
@@ -51,10 +56,14 @@ const LoginScreen = ({ navigation, onLoginSuccess }) => {
           navigation.replace('Progreso', { dataPerson: data }); // Pasar el objeto 'data' como parámetro
         } else {
           console.log('Error en la solicitud de inicio de sesión');
+          Alert.alert('Error', 'Los datos de inicio de sesión son incorrectos.');
+
         }
       })
       .catch(function (error) {
         console.error('Error al obtener la respuesta:', error);
+        Alert.alert('Error', 'Los datos de inicio de sesión son incorrectos.');
+
       });
   };
 

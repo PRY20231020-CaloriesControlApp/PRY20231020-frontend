@@ -3,8 +3,14 @@ import { View, Text, StyleSheet, Button, Modal, Dimensions, ScrollView, FlatList
 import CircularProgress from 'react-native-circular-progress-indicator';
 import { Ionicons } from '@expo/vector-icons';
 import * as Font from 'expo-font';
-const blobStorageBaseUrl = 'https://pry20231020fnb6cf.blob.core.windows.net/';
-const containerName = 'pry20231020-dataset-ml';
+import {
+  API_RECOMMENDATION_URL,
+  API_PROGRESS_URL,
+  BLOB_STORAGE_BASE_URL,
+  CONTAINER_NAME
+} from '../../../constants/apiConstants'; 
+const blobStorageBaseUrl = BLOB_STORAGE_BASE_URL;
+const containerName = CONTAINER_NAME;
 const blobName = '1';
 const blobtype = '.jpg';
 const imageUrl = `${blobStorageBaseUrl}${containerName}/${blobName}${blobtype}`;
@@ -164,7 +170,6 @@ const HomeScreen = ({ route }) => {
 
 
 
-  //const connString = "dbname='postgres' user='pry20231020admin' host='pry20231020-db.postgres.database.azure.com' port='5432' password='P123456789**' sslmode='require'";
 
 
   const breakfastOptions = [
@@ -209,12 +214,12 @@ const HomeScreen = ({ route }) => {
     return (
       <Modal visible={modalIngredientesVisible} animationType="slide">
         <View style={styles.modalContainer}>
-          <Text style={[styles.modalTitle, { color: '#FDA615', fontSize: 20, fontWeight: 'bold' }]}>
+          <Text style={[styles.modalTitle, { color: '#FDA615', fontSize: 20, fontWeight: 'bold', textAlign: 'center' }]}>
             {selectedMeal.name}
           </Text>
           {/* Agregar aquí la imagen de la comida */}
           <Image
-            source={{ uri: imageUrl }} // Reemplazar 'URL_DE_LA_IMAGEN' con la URL de la imagen de la comida
+            source={{ uri: `${blobStorageBaseUrl}${containerName}/1ingredients.jpg` }} // Reemplazar 'URL_DE_LA_IMAGEN' con la URL de la imagen de la comida
             style={{ width: 150, height: 150, borderRadius: 75, marginBottom: 16 }}
           />
           <Text style={[styles.subHeading, { color: '#FDA615', fontSize: 18 }]}>Ingredientes</Text>
@@ -364,15 +369,15 @@ const HomeScreen = ({ route }) => {
     //console.log ("id_person+++++" + id_person)
 
     const datos = {
-      dia: "Lunes",// currentDay
+      dia: currentDay,// currentDay
       comida_del_dia: mealType,//"Desayuno",//--
       grupo_comida: group_id,
       user_name: userName,
       person_id: personId,
-      token: "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJwZXJzb25pZCI6OCwidXN1YXJpbyI6InRpdCIsInJvbCI6ImFkbWluaXN0cmFkb3IifQ.CEZwB8CYTiQs4gb3DSWyZjmahYkt0hZOvNROw5tVGRqWKuzTMq9HWZbNG1ipnGZD1ESCHlcv1gtOT_bDvpPR77BvrAa5nyPx6zwSmTPcf708YusnGQdX_q6mJgFSmwjyElL8kMioIqvRGv9Sg1b6igZlahCkZ3p7oRtq5Oj5AwgfVwpRvHhbkD9LjWGbMmevQ3E-04IQEqMgbc_OrTj86flB1zuIIuGMwJ8ZpdQA6sl5SoDBOkiS7S8OfFyk1caWyPCE5a7bkNNHKmnr7mExPE4nu1VLftyQsmAmKj9GwnifO_lmYS81tN4jwyqIBL3RJn0Di-ZX5_a7bGt6QXx3BQ"
+      token: userToken
     };
 
-    fetch('https://pry20231020-fn.azurewebsites.net/api/recommendation?', {
+    fetch(API_RECOMMENDATION_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -425,10 +430,10 @@ const HomeScreen = ({ route }) => {
 
 
   const recordProgress = (consumed_date, consumed_calories) => {
-    console.log ("*** recordProgress ")
-    console.log ("personId ",personId)
-    console.log ("consumed_date ",consumed_date)
-    console.log ("consumed_calories ",consumed_calories)
+    console.log("*** recordProgress ")
+    console.log("personId ", personId)
+    console.log("consumed_date ", consumed_date)
+    console.log("consumed_calories ", consumed_calories)
 
 
 
@@ -439,7 +444,7 @@ const HomeScreen = ({ route }) => {
       weight: dataPerson.weight
     };
 
-    fetch('https://pry20231020-fn.azurewebsites.net/api/progress?', {
+    fetch(API_PROGRESS_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -506,8 +511,8 @@ const HomeScreen = ({ route }) => {
         <View style={styles.mealItemContent}>
           <View style={[styles.circleImage, { marginRight: 10 }]}>
             <Image
-              source={{ uri: `${blobStorageBaseUrl}${containerName}/${item.id}M${blobtype}` }}
-              style={{ width: 40, height: 40, borderRadius: 20 }}
+              source={{ uri: `${blobStorageBaseUrl}${containerName}/${item.id}Meal.png` }}
+              style={{ width: 42, height: 42, borderRadius: 10 }}
             />
           </View>
           <View style={styles.leftColumn}>
@@ -559,8 +564,12 @@ const HomeScreen = ({ route }) => {
                   <Text style={styles.buttonTextGroup}>{option.name}</Text>
                 </TouchableOpacity>
               ))}
-              <TouchableOpacity style={styles.buttonGroup} onPress={() => setModalVisible((prevState) => ({ ...prevState, [mealType]: false }))}>
-                <Text style={styles.buttonTextGroup}>Cancelar</Text>
+              
+              <TouchableOpacity
+                style={[styles.buttonGroup, { backgroundColor: 'transparent' }]} // Remove or set backgroundColor to 'transparent'
+                onPress={() => setModalVisible((prevState) => ({ ...prevState, [mealType]: false }))}
+              >
+                <Text style={[styles.buttonTextGroup, { color: '#FDA615' }]}>Cancelar</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -577,7 +586,7 @@ const HomeScreen = ({ route }) => {
     return null;
   };
 
-  
+
   const netCalories = calculateNet(dataPerson.gender, dataPerson.weight, dataPerson.height, dataPerson.age, dataPerson.activity_factor);
 
   // Calculate IMC
@@ -595,7 +604,7 @@ const HomeScreen = ({ route }) => {
   const currentTime = getCurrentTime();
 
   console.log('*****###netCalories*** : ', netCalories);
-  console.log('*****###imcScale*** : ', imcScale, "  " ,imc);
+  console.log('*****###imcScale*** : ', imcScale, "  ", imc);
   console.log('*****###percentageCaloricReduction*** : ', percentageCaloricReduction);
 
   console.log('*****###totalConsumedCalories*** : ', totalConsumedCalories);
@@ -696,6 +705,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     marginBottom: 4,
+    color: '#23191A',
+
   },
   mealInfo: {
     fontSize: 14,
@@ -733,7 +744,7 @@ const styles = StyleSheet.create({
   subHeading: {
     fontSize: 18,
     fontWeight: 'bold',
-    marginBottom: 8,
+    marginBottom: 1,
 
   },
   ingredientContainer: {

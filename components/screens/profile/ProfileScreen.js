@@ -1,17 +1,23 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, Modal, TextInput, Alert } from 'react-native';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 import { FontAwesome } from '@expo/vector-icons';
 import { SelectList } from 'react-native-dropdown-select-list'
-
-  const ProfileScreen = ({ navigation, route, updateDataPerson }) => {
-
+import {
+  API_REGISTER_URL,
+  BLOB_STORAGE_BASE_URL,
+  CONTAINER_NAME
+} from '../../../constants/apiConstants'; 
+const ProfileScreen = ({ navigation, route, updateDataPerson }) => {
+  const [date, setDate] = useState(new Date());
+  const [showDatePicker, setShowDatePicker] = useState(false);
 
   const { dataPerson } = route.params;
 
   const personId = dataPerson.id_person;
-  const blobStorageBaseUrl = 'https://pry20231020fnb6cf.blob.core.windows.net/';
-  const containerName = 'pry20231020-dataset-ml';
+  const blobStorageBaseUrl = BLOB_STORAGE_BASE_URL;
+  const containerName = CONTAINER_NAME;
   const blobName = '1Perfil.jpg';
   const imageUrl = `${blobStorageBaseUrl}${containerName}/${blobName}`;
 
@@ -60,13 +66,44 @@ import { SelectList } from 'react-native-dropdown-select-list'
           text: 'Cerrar Sesión',
           style: 'destructive',
           onPress: () => {
-            route.params.logOutSuccess(); 
+            route.params.logOutSuccess();
+            navigation.navigate('Inicio');
           },
         },
       ],
       { cancelable: false }
     );
   };
+  const formatDate = (date) => {
+    const year = date.getUTCFullYear();
+    const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+    const day = String(date.getUTCDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+  const showDatepicker = () => {
+    setShowDatePicker(true);
+  };
+  /*const onChange = (event, selectedDate) => {
+    const currentDate = selectedDate || date;
+    setShowDatePicker(Platform.OS === 'ios'); // Esto se configura en 'false' si es Android
+    setDate(currentDate);
+
+    if (currentDate) {
+      const formattedDate = formatDate(currentDate);
+      setFormData({ ...formData, birth_date: formattedDate });
+    }
+  };*/
+  const onChange = (event, selectedDate) => {
+    const currentDate = selectedDate || date;
+    setShowDatePicker(Platform.OS === 'ios'); // Asegúrate de establecer esto en 'false' si es Android
+    setDate(currentDate);
+
+    if (currentDate) {
+      const formattedDate = formatDate(currentDate);
+      setNewDataPerson({ ...newDataPerson, birth_date: formattedDate });
+    }
+  };
+
 
   return (
     <View style={styles.container}>
@@ -129,7 +166,7 @@ import { SelectList } from 'react-native-dropdown-select-list'
           </View>
           <Text style={styles.info}>{getActivityLabel(dataPerson.activity_factor)}</Text>
         </View>
-      
+
 
         <TouchableOpacity
           style={styles.logOut}
@@ -151,7 +188,7 @@ import { SelectList } from 'react-native-dropdown-select-list'
         <FontAwesome name="edit" size={24} color="#FDA615" />
       </TouchableOpacity>
 
-      {/* Botón para ver progreso */} 
+      {/* Botón para ver progreso */}
 
       <Modal
         visible={isEditModalVisible}
@@ -174,7 +211,7 @@ import { SelectList } from 'react-native-dropdown-select-list'
               />
             </View>
 
-            <View style={styles.editInputContainer}>
+            {/*  <View style={styles.editInputContainer}>
               <Text style={styles.editInputLabel}>Fecha de Nacimiento:</Text>
               <TextInput
                 style={styles.editInput}
@@ -184,10 +221,31 @@ import { SelectList } from 'react-native-dropdown-select-list'
                 }
                 placeholder="Ingrese su fecha de nacimiento"
               />
+              </View>*/}
+
+            <View style={styles.editInputContainer}>
+              <Text style={styles.editInputLabel}>Fecha de Nacimiento (aaaa/mm/dd)</Text>
+              <TouchableOpacity style={styles.inputDate} onPress={showDatepicker}>
+                <Text>{newDataPerson.birth_date ? formatDate(new Date(newDataPerson.birth_date)) : 'Seleccionar fecha'}</Text>
+
+              </TouchableOpacity>
             </View>
+
+
+            {showDatePicker && (
+              <DateTimePicker
+                value={date}
+                mode="date"
+                is24Hour={true}
+                display="default"
+                onChange={onChange}
+              />
+            )}
+
 
             <View style={styles.editInputContainer}>
               <Text style={styles.editInputLabel}>Sexo:</Text>
+
               <SelectList
                 boxStyles={{
                   width: '100%',
@@ -198,13 +256,15 @@ import { SelectList } from 'react-native-dropdown-select-list'
                 setSelected={(key) => {
                   const selectedValue = genderOptions.find((option) => option.key === key)?.value || '';
                   setNewDataPerson({ ...newDataPerson, gender: key });
+
                 }}
                 data={genderOptions}
                 save="key"
                 selected={newDataPerson.gender} // Valor seleccionado
-                placeholder="Seleccione"
+                placeholder={newDataPerson.gender === 'F' ? 'Femenino' : 'Masculino'}
 
               />
+
             </View>
             <View style={styles.editInputContainer}>
               <Text style={styles.editInputLabel}>Altura (cm):</Text>
@@ -239,7 +299,7 @@ import { SelectList } from 'react-native-dropdown-select-list'
                 data={data}
                 save="key"
                 selected={newDataPerson.activity_factor} // Valor seleccionado
-                placeholder="Seleccione"
+                placeholder={getActivityLabel(newDataPerson.activity_factor)}
                 boxStyles={{
                   width: '100%',
                   borderWidth: 1,
@@ -259,7 +319,7 @@ import { SelectList } from 'react-native-dropdown-select-list'
 
                 if (newDataPerson.activity_factor == 'Sedentaria o ligero') {
                   new_activity_factor = 1.5
-                } else if (newDataPerson.activity_factor == 'Sedentaria o ligero') {
+                } else if (newDataPerson.activity_factor == 'Moderado') {
                   new_activity_factor = 1.8
 
                 } else {
@@ -286,7 +346,7 @@ import { SelectList } from 'react-native-dropdown-select-list'
 
 
 
-                fetch('https://pry20231020-fn.azurewebsites.net/api/registro?', {
+                fetch(API_REGISTER_URL, {
                   method: 'POST',
                   headers: {
                     'Content-Type': 'application/json', // Cambio 'application/x-www-form-urlencoded' a 'application/json'
@@ -444,10 +504,9 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 45,
     borderWidth: 1,
-    paddingHorizontal: 10,
     textAlign: 'left', // Alinear a la izquierda
     borderColor: '#FDA615',
-    paddingHorizontal: 10,
+    paddingHorizontal: 20,
     borderRadius: 8,
 
   },
@@ -461,6 +520,15 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 18,
     fontWeight: 'bold',
+  },
+  inputDate: {
+    height: 45,
+    borderWidth: 1,
+    borderColor: '#FDA615',
+    paddingHorizontal: 20,
+    borderRadius: 8,
+    flexDirection: 'row', // Para alinear verticalmente el contenido
+    alignItems: 'center', // Centrar verticalmente el contenido
   },
 
 
@@ -486,6 +554,10 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginLeft: 5,
   },
+
+  cancelButtonText: {
+    marginTop: 10,
+  }
 
 });
 

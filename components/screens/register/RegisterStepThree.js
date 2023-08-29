@@ -1,8 +1,13 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Image } from 'react-native';
 
-const RegisterStepThree  = ({ onNext, onPrevious,formData, setFormData }) => {
+const RegisterStepThree = ({ onNext, onPrevious, formData, setFormData }) => {
   const [selectedOptions, setSelectedOptions] = useState([]);
+  const blobStorageBaseUrl = 'https://pry20231020fnb6cf.blob.core.windows.net/';
+  const containerName = 'pry20231020-dataset-ml';
+  const blobName = 'check';
+  const blobtype = '.png';
+  const imageUrl = `${blobStorageBaseUrl}${containerName}/${blobName}${blobtype}`;
 
   const handleNext = () => {
     onNext();
@@ -21,15 +26,15 @@ const RegisterStepThree  = ({ onNext, onPrevious,formData, setFormData }) => {
       <View style={styles.imageContainer}>
       </View>
       <View style={styles.textContainer}>
+        <Image source={{ uri: imageUrl }} style={styles.logo} />
+
         <Text style={styles.title}>Registro Exitoso</Text>
         <Text style={styles.subtitle}>Usted se ha registrado correctamente.</Text>
       </View>
       <TouchableOpacity style={styles.button} onPress={handleNext}>
         <Text style={styles.buttonText}>Ingresar</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.backButton} onPress={onPrevious}>
-        <Text style={styles.backButtonText}>Atrás</Text>
-      </TouchableOpacity>
+     
     </View>
   );
 };
@@ -86,6 +91,13 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
   },
+  logo: {
+    width: 100,
+    height: 100,
+    marginBottom: 30,
+    resizeMode: 'contain',
+
+  },
 });
 
-export default RegisterStepThree ;
+export default RegisterStepThree;

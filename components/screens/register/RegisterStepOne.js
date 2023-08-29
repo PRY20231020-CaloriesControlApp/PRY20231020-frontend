@@ -1,17 +1,30 @@
 import React, { useState } from 'react';
-import { View, TextInput, TouchableOpacity, Text, StyleSheet } from 'react-native';
+import { View, TextInput, TouchableOpacity, Text, StyleSheet, Alert } from 'react-native';
 
-const RegisterStepOne = ({ onNext , formData, setFormData }) => {
+const RegisterStepOne = ({ onNext, formData, setFormData }) => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
+
+
+
+  const handleNext = () => {
+     if (formData.name === '' || formData.user_name === '' || formData.password === '' || confirmPassword === '') {
+      Alert.alert('¡Atención!', 'Por favor, completa todos los campos.');
+      return;
+    }
+    if (formData.password !== confirmPassword) {
+      Alert.alert('¡Atención!', 'Las contraseñas no coinciden');
+      return;
+    }
+
+    onNext();
+  };
+
   return (
     <View style={styles.container}>
-      {/*<View style={styles.header}>
-        <Text style={styles.headerText}>Registro - Paso 1</Text>
-  </View>*/}
       <View style={styles.formContainer}>
         <View style={styles.inputContainer}>
           <Text style={styles.label}>Nombre</Text>
@@ -19,10 +32,10 @@ const RegisterStepOne = ({ onNext , formData, setFormData }) => {
             //placeholder="Ingrese su Nombre"
             style={styles.input}
             //value={name}
-           // onChangeText={setName}
+            // onChangeText={setName}
             value={formData.name}
             onChangeText={(value) => setFormData({ ...formData, name: value })}
-            
+
           />
         </View>
         <View style={styles.inputContainer}>
@@ -39,36 +52,30 @@ const RegisterStepOne = ({ onNext , formData, setFormData }) => {
         <View style={styles.inputContainer}>
           <Text style={styles.label}>Contraseña</Text>
           <TextInput
-           //placeholder="Ingrese unaContraseña"
             style={styles.input}
             secureTextEntry
-            //value={password}
-            //onChangeText={setPassword}
             value={formData.password}
             onChangeText={(value) => setFormData({ ...formData, password: value })}
           />
         </View>
         <View style={styles.inputContainer}>
-          <Text style={styles.label}>Confirmar contraseña</Text>
+          <Text style={styles.label}>Confirmar Contraseña</Text>
           <TextInput
-            //placeholder="Confirmar contraseña"
             style={styles.input}
             secureTextEntry
             value={confirmPassword}
-            onChangeText={setConfirmPassword}
-            
+            onChangeText={(value) => {
+              setConfirmPassword(value);
+            }}
           />
+         
         </View>
       </View>
-     
-
-
       <View style={styles.buttonContainer}>
-      <TouchableOpacity style={styles.nextButton} onPress={onNext}>
-        <Text style={styles.nextButtonText}>Siguiente</Text>
-      </TouchableOpacity>
+        <TouchableOpacity style={styles.nextButton} onPress={handleNext}>
+          <Text style={styles.nextButtonText}>Siguiente</Text>
+        </TouchableOpacity>
       </View>
-
     </View>
   );
 };
@@ -117,10 +124,10 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     flexDirection: 'row',
-   justifyContent: 'space-between',
+    justifyContent: 'space-between',
     paddingHorizontal: 16,
     marginTop: 20,
-    marginBottom:40,
+    marginBottom: 40,
     justifyContent: 'center',
   },
   nextButton: {

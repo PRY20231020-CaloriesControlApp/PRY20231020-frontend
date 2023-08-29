@@ -5,7 +5,9 @@ import { createStackNavigator } from '@react-navigation/stack';
 import RegisterStepOne from './RegisterStepOne';
 import RegisterStepTwo from './RegisterStepTwo';
 import RegisterStepThree from './RegisterStepThree';
-
+import {
+  API_REGISTER_URL
+} from '../../../constants/apiConstants'; 
 const Stack = createStackNavigator();
 
 const RegisterScreen = ({ navigation, onRegistrationComplete, handleLoginSuccess2 }) => {
@@ -34,7 +36,7 @@ const RegisterScreen = ({ navigation, onRegistrationComplete, handleLoginSuccess
       //setFormData (parseFloat(formData.weight))
       console.log('Datos del formulario: data que llego', formData); // Muestra los datos del formulario en la consola
 
-      fetch('https://pry20231020-fn.azurewebsites.net/api/registro?', {
+      fetch(API_REGISTER_URL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -52,7 +54,7 @@ const RegisterScreen = ({ navigation, onRegistrationComplete, handleLoginSuccess
           //onRegistrationComplete(data)
           handleLoginSuccess2(data);
           //navigation.replace('Home', { user_token: user_token, user_name: user_name, id_person: id_person });
-          navigation.replace('Home', { dataPerson: data }); // Pasar el objeto 'data' como parámetro
+          navigation.replace('Inicio', { dataPerson: data }); // Pasar el objeto 'data' como parámetro
           navigation.replace('Perfil', { dataPerson: data }); // Pasar el objeto 'data' como parámetro
           navigation.replace('Progreso', { dataPerson: data }); // Pasar el objeto 'data' como parámetro
 

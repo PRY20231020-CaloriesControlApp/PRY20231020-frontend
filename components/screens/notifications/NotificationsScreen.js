@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, Text } from 'react-native';
 import { format, getDay, isWithinInterval } from 'date-fns';
-
+import {
+    API_NOTIFICACION_URL
+  } from '../../../constants/apiConstants'; 
 const NotificationsScreen = () => {
     const [notificationData, setNotificationData] = useState(null);
 
@@ -16,7 +18,7 @@ const NotificationsScreen = () => {
             person_id: 0,
         };
 
-        fetch('https://pry20231020-fn.azurewebsites.net/api/notification?', {
+        fetch(API_NOTIFICACION_URL, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

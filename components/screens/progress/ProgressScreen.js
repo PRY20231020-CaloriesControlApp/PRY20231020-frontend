@@ -137,8 +137,9 @@ const styles = StyleSheet.create({
     color: '#FDA615', // Color naranja
   },
   dailyProgressContainer: {
+    flex: 1,
     width: '90%',
-    backgroundColor: 'white', // Fondo blanco
+    backgroundColor: 'white',
     paddingHorizontal: 20,
     paddingTop: 20,
     paddingBottom: 30,
@@ -153,6 +154,7 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84,
     elevation: 5,
   },
+  
   dailyProgressHeaderText: {
     fontSize: 20,
     fontWeight: 'bold',
