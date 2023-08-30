@@ -1,14 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Button, Modal, Dimensions, ScrollView, FlatList, Switch, Image, TouchableOpacity } from 'react-native';
 import CircularProgress from 'react-native-circular-progress-indicator';
+import { FontAwesome } from '@expo/vector-icons';
+
 import { Ionicons } from '@expo/vector-icons';
 import * as Font from 'expo-font';
 import {
   API_RECOMMENDATION_URL,
   API_PROGRESS_URL,
   BLOB_STORAGE_BASE_URL,
-  CONTAINER_NAME
-} from '../../../constants/apiConstants'; 
+  CONTAINER_NAME,
+  API_FEEDBACK_URL
+} from '../../../constants/apiConstants';
 const blobStorageBaseUrl = BLOB_STORAGE_BASE_URL;
 const containerName = CONTAINER_NAME;
 const blobName = '1';
@@ -38,6 +41,15 @@ const HomeScreen = ({ route }) => {
   const [dataLunch, setDataLunch] = useState([]);
   const [dataDinner, setDataDinner] = useState([]);
 
+  const [breakfastLiked, setBreakfastLiked] = useState(false);
+  const [breakfastDisliked, setBreakfastDisliked] = useState(false);
+
+  const [lunchLiked, setLunchLiked] = useState(false);
+  const [lunchDisliked, setLunchDisliked] = useState(false);
+
+  const [dinnerLiked, setDinnerLiked] = useState(false);
+  const [dinnerDisliked, setDinnerDisliked] = useState(false);
+
   const [breakfastSelected, setBreakfastSelected] = useState(false);
   const [lunchSelected, setLunchSelected] = useState(false);
   const [dinnerSelected, setDinnerSelected] = useState(false);
@@ -49,6 +61,165 @@ const HomeScreen = ({ route }) => {
   const [selectedBreakfast, setSelectedBreakfast] = useState([]);
   const [selectedLunch, setSelectedLunch] = useState([]);
   const [selectedDinner, setSelectedDinner] = useState([]);
+
+  const [showHelpModal, setShowHelpModal] = useState(false);
+
+  const abrirModalDeAyuda = () => {
+    setShowHelpModal(true);
+  };
+
+  const cerrarModalDeAyuda = () => {
+    setShowHelpModal(false);
+  };
+
+  const HelpModal = ({ isVisible, onClose }) => {
+    return (
+      <Modal
+        visible={isVisible}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={onClose}
+      >
+        <View style={styles.modalContainerHelp}>
+          <ScrollView contentContainerStyle={styles.scrollContainer}>
+            <Text style={styles.modalTitleHelp}>"Guía de Uso de NutriSage</Text>
+            <Text style={styles.stepSubtitle}>
+              <Ionicons name="home" size={24} color="#FDA615" />
+              {' '}Inicio
+            </Text>
+
+            <Text style={styles.stepExplanation}>
+              En esta sección, busca recomendaciones según tus preferencias de alimentos.
+
+            </Text>
+            <View style={styles.stepContainer}>
+
+              <Text style={styles.stepNumber}>1. Seleccionar Preferencia de Alimento</Text>
+
+            </View>
+
+            <Text style={styles.stepExplanation}>
+              Haz clic en el icono de <Ionicons name="md-refresh" size={24} color="#FDA615" />
+              y luego selecciona el tipo de alimento que prefieres para cada comida del día (por ejemplo, "Carnes", "Arroces","Pollo", entre otros).
+            </Text>
+
+            <View style={styles.stepContainer}>
+              <Text style={styles.stepNumber}>2. Ver Ingredientes</Text>
+            </View>
+
+            <Text style={styles.stepExplanation}>
+              Toca el icono de <Ionicons
+                name="add-circle-outline" // Cambio de "md-more" a "add-circle-outline"
+                size={24}
+                color="#FDA615"
+              /> para ver la lista de ingredientes con sus cantidades recomendadas y calorías.
+            </Text>
+
+            <View style={styles.stepContainer}>
+              <Text style={styles.stepNumber}>3. Completar el Progreso del Día</Text>
+
+            </View>
+
+            <Text style={styles.stepExplanation}>
+              Activa el switch <Ionicons
+                name="toggle-outline"
+                size={24}
+                color="#FDA615"
+              /> cuando hayas completado la comida del día.
+            </Text>
+
+
+
+            {/* Gif al final */}
+            {/*  <View style={styles.gifContainer}>
+              <Image
+                source={{ uri: 'URL_DE_TU_GIF_FINAL' }}
+                style={styles.stepGif}
+              />
+    </View>*/}
+
+            <Text style={styles.stepSubtitle}>
+              <Ionicons name="bar-chart" size={24} color="#FDA615" />
+              {' '}Progreso
+            </Text>
+
+
+
+            <Text style={styles.stepExplanation}>
+              La Pantalla de Progreso te brinda una visión completa de tu viaje hacia tus objetivos de salud y bienestar. Aquí encontrarás información sobre las calorías perdidas, los días en los que has progresado, el seguimiento calórico y los detalles diarios de tu progreso.
+
+            </Text>
+            {/* Gif al final */}
+            {/*  <View style={styles.gifContainer}>
+              <Image
+                source={{ uri: 'URL_DE_TU_GIF_FINAL' }}
+                style={styles.stepGif}
+              />
+          </View>*/}
+            <Text style={styles.stepSubtitle}>
+              <Ionicons name="heart" size={24} color="#FDA615" />
+              {' '}Notificaciones
+            </Text>
+
+
+
+            <Text style={styles.stepExplanation}>
+              Mantente siempre alerta con consejos y notificaciones útiles para tu bienestar.
+
+            </Text>
+            {/* Gif al final */}
+            {/*  <View style={styles.gifContainer}>
+              <Image
+                source={{ uri: 'URL_DE_TU_GIF_FINAL' }}
+                style={styles.stepGif}
+              />
+          </View>*/}
+            <Text style={styles.stepSubtitle}>
+              <Ionicons name="person" size={24} color="#FDA615" />
+              {' '}Perfil
+            </Text>
+
+
+
+            <Text style={styles.stepExplanation}>
+              Gestiona tu información personal y realiza un seguimiento de tus datos físicos. Personaliza tu perfil para obtener un control más preciso de tu progreso.</Text>
+            {/* Progreso */}
+            <View style={styles.stepContainer}>
+              <Text style={styles.stepNumber}>1. Editar Perfil</Text>
+
+            </View>
+
+            <Text style={styles.stepExplanation}>
+              Toque el icono de lápiz <FontAwesome name="edit" size={24} color="#FDA615" />
+              en la esquina superior derecha para comenzar a editar su perfil.
+            </Text>
+            <View style={styles.stepContainer}>
+              <Text style={styles.stepNumber}>2. Cerrar Sesión </Text>
+
+            </View>
+
+            <Text style={styles.stepExplanation}>
+              Para cerrar sesión en el perfil, toca el botón <FontAwesome name="sign-out" size={24} color="#FDA615" /> Cerrar Sesión
+              en la parte inferior de la pantalla de perfil y confirma la acción.
+            </Text>
+            {/* Gif al final */}
+            {/*  <View style={styles.gifContainer}>
+              <Image
+                source={{ uri: 'URL_DE_TU_GIF_FINAL' }}
+                style={styles.stepGif}
+              />
+          </View>*/}
+
+          </ScrollView>
+
+          {/* Botón Cerrar */}
+          <TouchableOpacity style={styles.closeButtonHelp} onPress={onClose}>
+            <Text style={styles.closeButtonTextHelp}>Cerrar</Text>
+          </TouchableOpacity>
+        </View>
+      </Modal>
+    );
+  };
 
 
   const calculateNet = (gender, weight, height, age, activity_factor) => {
@@ -167,6 +338,55 @@ const HomeScreen = ({ route }) => {
     );
   };
 
+  const handleLike = (mealType, mealId, liked) => {
+
+    console.log("****mealType", mealType)
+    console.log("****mealId", mealId)
+
+    console.log("****liked", liked)
+
+
+    const data = {
+      person_id: personId,
+      meal_id: mealId,
+      liked: liked,
+      feedback_date: getCurrentDate(),
+    };
+
+    // Envía la solicitud POST a la API para registrar el like/dislike
+    fetch(API_FEEDBACK_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Error en la solicitud. Código de estado: ' + response.status);
+        }
+      })
+      .then(function (data) {
+        console.log("Feedback registrado*** " + JSON.stringify(data));
+
+
+        if (mealType === 'Desayuno') {
+          setBreakfastLiked(liked);
+          setBreakfastDisliked(!liked);
+        } else if (mealType === 'Almuerzo') {
+          setLunchLiked(liked);
+          setLunchDisliked(!liked);
+        } else {
+          setDinnerLiked(liked);
+          setDinnerDisliked(!liked);
+        }
+
+
+      })
+      .catch((error) => {
+        console.error('Error al registrar el like/dislike:', error);
+      });
+  };
 
 
 
@@ -180,7 +400,7 @@ const HomeScreen = ({ route }) => {
   ];
 
   const lunchOptions = [
-    { id: 1, name: 'Pescados y Mariscos' },
+    { id: 1, name: 'Mariscos' },
     { id: 2, name: 'Carnes' },
     { id: 3, name: 'Menestras' },
     { id: 4, name: 'Pastas' },
@@ -291,10 +511,13 @@ const HomeScreen = ({ route }) => {
         //id: dataBreakfast.id_meal,
         id: 1,
         mealType: "Desayuno",
+        mealId: dataBreakfast.id_meal,
         name: dataBreakfast.healthy_equivalent_name,
         calories: dataBreakfast.calories_meal_type,
         ingredients: dataBreakfast.ingredients,
         selected: false,
+        liked: breakfastLiked,   // Agregar estas propiedades liked y disliked
+        disliked: breakfastDisliked,
       },
     ]
     : [];
@@ -305,11 +528,13 @@ const HomeScreen = ({ route }) => {
         id: 2,
         //id: dataLunch.id_meal,
         mealType: "Almuerzo",
-
+        mealId: dataLunch.id_meal,
         name: dataLunch.healthy_equivalent_name,
         calories: dataLunch.calories_meal_type,
         ingredients: dataLunch.ingredients,
         selected: false,
+        liked: lunchLiked,   // Agregar estas propiedades liked y disliked
+        disliked: lunchDisliked,
       },
     ]
     : [];
@@ -320,11 +545,13 @@ const HomeScreen = ({ route }) => {
         id: 3,
         //id: dataDinner.id_meal,
         mealType: "Cena",
-
+        mealId: dataDinner.id_meal,
         name: dataDinner.healthy_equivalent_name,
         calories: dataDinner.calories_meal_type,
         ingredients: dataDinner.ingredients,
         selected: false,
+        liked: dinnerLiked,   // Agregar estas propiedades liked y disliked
+        disliked: dinnerDisliked,
       },
     ]
     : [];
@@ -516,26 +743,55 @@ const HomeScreen = ({ route }) => {
             />
           </View>
           <View style={styles.leftColumn}>
-
             <Text style={styles.mealName}>{item.name}</Text>
             <Text style={styles.mealInfo}>{item.calories} kcal</Text>
+
+            <View style={styles.likeDislikeContainer}>
+              <TouchableOpacity
+                style={[
+                  styles.likeButton,
+                  item.liked && { backgroundColor: '#93E86C' }, // Cambia el estilo si está marcado como "me gusta"
+                ]}
+                onPress={() => handleLike(item.mealType, item.mealId, true)}
+              >
+                <FontAwesome name="thumbs-up" size={14} color="#333" />
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[
+                  styles.dislikeButton,
+                  item.disliked && { backgroundColor: '#f06565' }, // Cambia el estilo si está marcado como "no me gusta"
+                ]}
+                onPress={() => handleLike(item.mealType, item.mealId, false)}
+              >
+                <FontAwesome name="thumbs-down" size={14} color="#333" />
+              </TouchableOpacity>
+            </View>
           </View>
-          <View style={styles.switchContainer}>
-            <Switch
-              value={selectedMeals.some((meal) => meal.id === item.id)}
-              onValueChange={() => handleCheckboxToggle(item)}
-            />
-            <Ionicons
-              name="add-circle-outline" // Cambio de "md-more" a "add-circle-outline"
-              size={24}
-              color="#FDA615"
-              onPress={() => mostrarModalIngredientes(item)}
-            />
+          <View style={styles.buttonContainer}>
+
+
+
+
+            <View style={styles.switchContainer}>
+              <Switch
+                value={selectedMeals.some((meal) => meal.id === item.id)}
+                onValueChange={() => handleCheckboxToggle(item)} style={styles.buttonMeal}
+              />
+              <Ionicons
+                name="add-circle-outline"
+                size={24}
+                color="#FDA615"
+                onPress={() => mostrarModalIngredientes(item)}
+                style={styles.buttonMeal}
+              />
+            </View>
           </View>
         </View>
       </View>
     );
   };
+
+
 
   const renderCategory = (mealType, data, options) => {
 
@@ -564,7 +820,7 @@ const HomeScreen = ({ route }) => {
                   <Text style={styles.buttonTextGroup}>{option.name}</Text>
                 </TouchableOpacity>
               ))}
-              
+
               <TouchableOpacity
                 style={[styles.buttonGroup, { backgroundColor: 'transparent' }]} // Remove or set backgroundColor to 'transparent'
                 onPress={() => setModalVisible((prevState) => ({ ...prevState, [mealType]: false }))}
@@ -619,8 +875,22 @@ const HomeScreen = ({ route }) => {
 
   return (
     <View style={styles.container}>
+      {/* Botón de Ayuda */}
+
+
       <ScrollView>
-        {/*<Text style={styles.heading}></Text>*/}
+        {/* Botón de Ayuda */}
+        <TouchableOpacity
+          style={styles.questionButtonContainer}
+          onPress={() => abrirModalDeAyuda()}
+        >
+          <Ionicons name="help-circle" size={24} color="#FDA615" />
+        </TouchableOpacity>
+
+        {/* Resto del contenido de HomeScreen */}
+
+        {/* Modal de Ayuda */}
+        <HelpModal isVisible={showHelpModal} onClose={cerrarModalDeAyuda} />
 
         <View style={styles.progressContainer}>
           <CircularProgress
@@ -647,8 +917,6 @@ const HomeScreen = ({ route }) => {
         {renderCategory('Desayuno', breakfastData, breakfastOptions)}
         {renderCategory('Almuerzo', lunchData, lunchOptions)}
         {renderCategory('Cena', dinnerData, dinnerOptions)}
-
-
 
 
       </ScrollView>
@@ -699,7 +967,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   switchContainer: {
-    alignSelf: 'flex-end',
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginLeft: 10, // Espacio entre el botón "add" y los botones de "like/dislike"
   },
   mealName: {
     fontSize: 16,
@@ -838,6 +1108,128 @@ const styles = StyleSheet.create({
     borderRadius: 10, // La mitad del tamaño
     marginRight: 10, // Espacio entre la imagen y el texto
   },
+  questionButtonContainer: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+    zIndex: 1, // Agrega zIndex
+  },
+  modalContainerHelp: {
+    flex: 1,
+    backgroundColor: '#F2F2F2', // Cambiado a gris claro
+  },
+  scrollContainer: {
+    paddingHorizontal: 24, // Mayor padding horizontal
+    paddingTop: 32,
+    paddingBottom: 16,
+  },
+  modalTitleHelp: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 16,
+    color: '#333',
+    textAlign: 'center',
+  },
+  stepContainer: {
+    flexDirection: 'row', // Mostrar número de paso junto con el texto
+    alignItems: 'center', // Centrar elementos verticalmente
+    marginBottom: 2,
+    marginLeft: 5,
+  },
+  stepNumber: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#FDA615',
+    marginRight: 8, // Espacio entre número y texto
+  },
+  stepDescription: {
+    fontSize: 16,
+    color: '#333',
+  },
+  stepIcon: {
+    width: 24,
+    height: 24,
+    marginRight: 16, // Espacio entre ícono y texto
+  },
+  stepExplanation: {
+    fontSize: 14,
+    color: '#757575', // Color de texto más claro para explicaciones
+    marginBottom: 22,
+    marginLeft: 7,
+    textAlign: 'justify', // Añade esta propiedad para justificar el texto
+
+
+  },
+  gifContainer: {
+    alignItems: 'center',
+  },
+  stepGif: {
+    width: 200,
+    height: 200,
+    resizeMode: 'contain',
+    marginBottom: 24,
+  },
+  closeButtonHelp: {
+    backgroundColor: '#FDA615',
+    borderRadius: 20,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    marginTop: 20,
+    alignSelf: 'center',
+  },
+  closeButtonTextHelp: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 18,
+  },
+  stepSubtitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#6F6F6F',
+    marginBottom: 8,
+    marginTop: 8,
+  },
+  buttonRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  buttonContainer: {
+    flexDirection: 'column',
+    alignItems: 'center',
+  },
+
+  likeDislikeContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    //marginLeft: 8, // Espacio entre el botón "add" y los botones de "like/dislike"
+    marginTop: 15, // Espacio entre el botón "add" y los botones de "like/dislike"
+
+  },
+  likeButton: {
+    backgroundColor: 'rgba(210, 247, 193, 0.6)', 
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 5,
+    marginRight: 10,
+  },
+  dislikeButton: {
+    backgroundColor: 'rgba(245, 213, 213, 1)', 
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 5,
+  },
+  likeButtonText: {
+    color: '#FFF', // Color del texto en los botones
+  },
+
+  buttonMeal: {
+    //paddingVertical: 5,
+    // borderRadius: 5,
+    //marginRight: 10,
+    marginLeft: 2,
+
+
+  }
 
 });
 
