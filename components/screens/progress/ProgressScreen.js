@@ -16,6 +16,47 @@ const ProgressScreen = ({ route, navigation }) => {
   const daysSinceRegistration = Math.floor((currentDate - registrationDate) / (1000 * 60 * 60 * 24));
   const goalCalories = 10000;
   const progressPercent = goalCalories !== 0 ? (totalConsumedCalories / goalCalories) * 100 : 0;
+
+  // Encuentra el peso más antiguo y el peso más actual
+  const weights = progressData.map((progress) => progress.progress_weight);
+  console.log("progress_weight ",weights)
+  const validWeights = weights.filter((progress_weight) => !isNaN(progress_weight) && progress_weight !== null && progress_weight !== undefined);
+  console.log("validWeights ",validWeights)
+
+  
+  let weightLostText = 0;
+  if (validWeights.length > 0) {
+    console.log("eNTRE" )
+
+    const sortedWeights = validWeights.sort((a, b) => {
+      return new Date(a.consumed_date) - new Date(b.consumed_date);
+    });
+    const oldestWeight = sortedWeights[sortedWeights.length - 1]; // El primer peso es el más antiguo
+    const latestWeight = sortedWeights[0]; // El último peso es el más actual
+    console.log("oldestWeight",oldestWeight )
+  
+    console.log("latestWeight",latestWeight )
+
+
+    let weightLost;
+    if (oldestWeight - latestWeight < 1) {
+      weightLost = (oldestWeight - latestWeight) * 1000; // Convierte a gramos
+    } else {
+      weightLost = oldestWeight - latestWeight; // En kilogramos
+    }
+    if (weightLost < 1) {
+      // Mostrar en gramos
+      weightLostText = weightLost.toFixed(1) + ' g';
+    } else {
+      // Mostrar en kilogramos
+      weightLostText = weightLost.toFixed(1) + ' kg';
+    }
+
+  } else {
+    console.log('No hay pesos válidos en el arreglo de progreso.');
+  }
+
+
   const dailyProgressDetails = progressData.map((progress) => {
     const utcDate = new Date(progress.consumed_date);
     const localDate = new Date(utcDate.getUTCFullYear(), utcDate.getUTCMonth(), utcDate.getUTCDate());
@@ -28,15 +69,32 @@ const ProgressScreen = ({ route, navigation }) => {
   });
 
 
+
+  // Mensaje de Objetivo Mensual
+  const monthlyGoalMessage = 'Tu objetivo: Perder de 1 a 2 kilos este mes';
+
+  // Mensaje de Recordatorio
+  const reminderMessage = 'Actualiza tu peso cada semana para alcanzar tu objetivo.';
+
+  // Mensajes de Motivación
+  const motivationalMessages = [
+    '¡Sigue adelante! Estás haciendo un gran trabajo.',
+    'Cada pequeño paso te acerca a tu objetivo. ¡No te rindas!',
+    'Recuerda que la constancia es clave. ¡Tú puedes lograrlo!',
+  ];
+
+  const motivationalMessage = motivationalMessages[0]; // Puedes cambiar el índice para seleccionar el mensaje que desees mostrar
+
   return (
     <View style={styles.container}>
-      <View style={styles.headerContainer}>
+
+      {/* <View style={styles.headerContainer}>
         <Text style={styles.headerText}>Mi Progreso</Text>
-      </View>
+  </View>*/}
       <View style={styles.statsContainer}>
         <View style={styles.statBox}>
-          <Text style={styles.statLabel}>Calorías perdidas</Text>
-          <Text style={styles.statValue}>{totalConsumedCalories}</Text>
+          <Text style={styles.statLabel}>Peso Perdido</Text>
+          <Text style={styles.statValue}>{weightLostText}</Text>
         </View>
         <View style={styles.statBox}>
           <Text style={styles.statLabel}>Días con progreso</Text>
@@ -64,7 +122,10 @@ const ProgressScreen = ({ route, navigation }) => {
         />
         <Text style={styles.circularProgressText}>Progreso calórico</Text>
       </View>
-
+      <View style={styles.goalContainer}>
+        <Text style={styles.goalText}>{monthlyGoalMessage}</Text>
+        <Text style={styles.reminderText}>{reminderMessage}</Text>
+      </View>
       <View style={styles.dailyProgressContainer}>
         <Text style={styles.dailyProgressHeaderText}>Detalles Diarios</Text>
         <View>
@@ -80,6 +141,9 @@ const ProgressScreen = ({ route, navigation }) => {
           />
         </View>
       </View>
+      <View style={styles.goalContainer}>
+        <Text style={styles.motivationalText}>{motivationalMessage}</Text>
+      </View>
     </View>
   );
 };
@@ -88,7 +152,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#F2F2F2',
     alignItems: 'center',
-    paddingTop: 20,
+    paddingTop: 10,
   },
   headerContainer: {
     marginBottom: 20,
@@ -142,8 +206,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     paddingHorizontal: 20,
     paddingTop: 20,
-    paddingBottom: 30,
-    marginTop: 20,
+    paddingBottom: 40,
+    marginTop: 5,
     borderRadius: 10,
     shadowColor: '#000',
     shadowOffset: {
@@ -154,7 +218,7 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84,
     elevation: 5,
   },
-  
+
   dailyProgressHeaderText: {
     fontSize: 20,
     fontWeight: 'bold',
@@ -181,6 +245,31 @@ const styles = StyleSheet.create({
   dateText: {
     fontSize: 14,
     color: '#777',
+  },
+  goalContainer: {
+    alignItems: 'center',
+    marginHorizontal: 20,
+    marginBottom: 20,
+    marginTop: 8,
+  },
+  goalText: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#FDA615',
+    textAlign: 'center',
+  },
+  reminderText: {
+    fontSize: 14,
+    color: '#555',
+    textAlign: 'center',
+    marginTop: 10,
+  },
+  motivationalText: {
+    fontSize: 14,
+    color: '#FDA615',
+    fontStyle: 'italic',
+    textAlign: 'center',
+    marginTop: 10,
   },
 
 });

@@ -8,7 +8,7 @@ import {
   API_REGISTER_URL,
   BLOB_STORAGE_BASE_URL,
   CONTAINER_NAME
-} from '../../../constants/apiConstants'; 
+} from '../../../constants/apiConstants';
 const ProfileScreen = ({ navigation, route, updateDataPerson }) => {
   const [date, setDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -23,6 +23,25 @@ const ProfileScreen = ({ navigation, route, updateDataPerson }) => {
 
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [newDataPerson, setNewDataPerson] = useState(dataPerson, { activity_factor: '', });
+  const peso = dataPerson.weight; // Peso en kilogramos
+  const altura = dataPerson.height / 100; // Altura en metros (se divide por 100 para convertir de cm a metros)
+  const imc = peso / (altura * altura);
+
+  let condition = "";
+
+  if (imc < 18.5) {
+    condition = "Bajo peso";
+  } else if (imc >= 18.5 && imc < 25.0) {
+    condition = "Normal";
+  } else if (imc >= 25.0 && imc < 30.0) {
+    condition = "Sobrepeso";
+  } else if (imc >= 30.0 && imc < 35.0) {
+    condition = "Obesidad I";
+  } else if (imc >= 35.0 && imc < 40.0) {
+    condition = "Obesidad II";
+  } else {
+    condition = "Obesidad III";
+  }
 
   const toggleEditModal = () => {
     setIsEditModalVisible(!isEditModalVisible);
@@ -148,7 +167,7 @@ const ProfileScreen = ({ navigation, route, updateDataPerson }) => {
         <View style={styles.userInfo}>
           <View style={styles.userLabel}>
             <FontAwesome name="arrows-v" size={20} color="black" />
-            <Text style={styles.labelWithIcon}>Altura:</Text>
+            <Text style={styles.labelWithIcon}>Estatura:</Text>
           </View>
           <Text style={styles.info}>{dataPerson.height} cm</Text>
         </View>
@@ -166,7 +185,13 @@ const ProfileScreen = ({ navigation, route, updateDataPerson }) => {
           </View>
           <Text style={styles.info}>{getActivityLabel(dataPerson.activity_factor)}</Text>
         </View>
-
+        <View style={styles.userInfo}>
+          <View style={styles.userLabel}>
+            <FontAwesome name="calculator" size={20} color="black" />
+            <Text style={styles.labelWithIcon}>Condición IMC:</Text>
+          </View>
+          <Text style={styles.info}>{condition}</Text>
+        </View>
 
         <TouchableOpacity
           style={styles.logOut}
@@ -267,14 +292,14 @@ const ProfileScreen = ({ navigation, route, updateDataPerson }) => {
 
             </View>
             <View style={styles.editInputContainer}>
-              <Text style={styles.editInputLabel}>Altura (cm):</Text>
+              <Text style={styles.editInputLabel}>Estatura (cm):</Text>
               <TextInput
                 style={styles.editInput}
                 value={newDataPerson.height.toString()}
                 onChangeText={(text) =>
                   setNewDataPerson({ ...newDataPerson, height: text })
                 }
-                placeholder="Ingrese su altura:"
+                placeholder="Ingrese su estatura:"
               />
             </View>
             <View style={styles.editInputContainer}>
@@ -338,7 +363,7 @@ const ProfileScreen = ({ navigation, route, updateDataPerson }) => {
                   weight: parseFloat(newDataPerson.weight),
                   activity_factor: new_activity_factor,
                   caloric_reduction: parseInt(newDataPerson.caloric_reduction),
-                  action: "update",
+                  action: "update_profile",
                   id_person: newDataPerson.id_person
 
                 };

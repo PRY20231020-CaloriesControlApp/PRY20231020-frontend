@@ -13,7 +13,7 @@ import ProgressScreen from './components/screens/progress/ProgressScreen';
 import NotificationsScreen from './components/screens/notifications/NotificationsScreen';
 import ProfileScreen from './components/screens/profile/ProfileScreen';
 import ChoiceScreen from './components/screens/intro/ChoiceScreen';
-import WelcomeScreen from './components/screens/intro/WelcomeScreen';
+//import WelcomeScreen from './components/screens/intro/WelcomeScreen';
 
 
 const Stack = createStackNavigator();
@@ -29,21 +29,18 @@ const App = () => {
   const [dataPerson, setDataPerson] = useState({});
 
   const handleLoginSuccess = (data) => {
-    console.log("HOLISSSS Entre handleLoginSuccess")
     setIsAuthenticated(true);
     setDataPerson(data);
 
   };
 
   const handleLoginSuccess2 = (data) => {
-    console.log("HOLAAAAAAA handleLoginSuccess2")
     setIsAuthenticated(true);
     setDataPerson(data);
 
   };
 
   const updateProfile = (data) => {
-    console.log("HOLAAAAAAA updateProfile")
     setDataPerson(data);
 
   };
@@ -106,7 +103,7 @@ const App = () => {
         ) : (
 
           <Stack.Navigator>
-            <Stack.Screen name="Bienvenida" component={WelcomeScreen} options={{ headerShown: false }} />
+            {/*<Stack.Screen name="Bienvenida" component={WelcomeScreen} options={{ headerShown: false }} />*/}
             <Stack.Screen name="ChoiceScreen" component={ChoiceScreen} options={{ headerShown: false }} />
 
             {/*  <Stack.Screen name="Login">

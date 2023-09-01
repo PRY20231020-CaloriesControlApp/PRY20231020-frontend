@@ -68,7 +68,14 @@ const RegisterStepOne = ({ onNext, formData, setFormData }) => {
               setConfirmPassword(value);
             }}
           />
-         
+        </View>
+        <View style={styles.inputContainer}>
+          <Text style={styles.label}>Pregunta de seguridad: ¿Cuál es el nombre de tu abuelo?</Text>
+          <TextInput
+            style={styles.input}
+            value={formData.security_question_answer}
+            onChangeText={(value) => setFormData({ ...formData, security_question_answer: value })}
+          />
         </View>
       </View>
       <View style={styles.buttonContainer}>
@@ -111,6 +118,8 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     fontSize: 16,
     fontWeight: 'bold',
+    color: '#555',
+
   },
   input: {
     height: 40,

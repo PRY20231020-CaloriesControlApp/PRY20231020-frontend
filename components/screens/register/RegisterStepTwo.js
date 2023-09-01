@@ -214,6 +214,8 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     fontSize: 16,
     fontWeight: 'bold',
+    color: '#555',
+
   },
   input: {
     height: 45,

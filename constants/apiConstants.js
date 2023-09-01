@@ -1,6 +1,6 @@
 // apiConstants.js
 export const API_LOGIN_URL = 'https://pry20231020-fn.azurewebsites.net/api/login';
-export const API_REGISTER_URL = 'https://pry20231020-fn.azurewebsites.net/api/registro?';
+export const API_REGISTER_URL = 'https://pry20231020-fn.azurewebsites.net/api/register?';
 export const API_RECOMMENDATION_URL = 'https://pry20231020-fn.azurewebsites.net/api/recommendation';
 export const API_PROGRESS_URL = 'https://pry20231020-fn.azurewebsites.net/api/progress?';
 export const API_NOTIFICACION_URL = 'https://pry20231020-fn.azurewebsites.net/api/notification?';

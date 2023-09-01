@@ -82,7 +82,7 @@ const HomeScreen = ({ route }) => {
       >
         <View style={styles.modalContainerHelp}>
           <ScrollView contentContainerStyle={styles.scrollContainer}>
-            <Text style={styles.modalTitleHelp}>"Guía de Uso de NutriSage</Text>
+            <Text style={styles.modalTitleHelp}>Guía de Uso de NutriSage</Text>
             <Text style={styles.stepSubtitle}>
               <Ionicons name="home" size={24} color="#FDA615" />
               {' '}Inicio
@@ -230,7 +230,7 @@ const HomeScreen = ({ route }) => {
       height = parseFloat(height);
       age = parseInt(age);
     } catch (error) {
-      throw new Error('El peso, altura y edad deben ser números válidos.');
+      throw new Error('El peso, estatura y edad deben ser números válidos.');
     }
 
     let tmb;
@@ -329,9 +329,6 @@ const HomeScreen = ({ route }) => {
     }
   };
 
-
-
-
   const isMealSelected = (mealType, item) => {
     return selectedMeals.some(
       (meal) => meal.id === item.id && meal.mealType === mealType
@@ -340,17 +337,11 @@ const HomeScreen = ({ route }) => {
 
   const handleLike = (mealType, mealId, liked) => {
 
-    console.log("****mealType", mealType)
-    console.log("****mealId", mealId)
-
-    console.log("****liked", liked)
-
-
     const data = {
       person_id: personId,
       meal_id: mealId,
       liked: liked,
-      feedback_date: getCurrentDate(),
+      //feedback_date: getCurrentDateTime(),
     };
 
     // Envía la solicitud POST a la API para registrar el like/dislike
@@ -400,7 +391,7 @@ const HomeScreen = ({ route }) => {
   ];
 
   const lunchOptions = [
-    { id: 1, name: 'Mariscos' },
+    { id: 1, name: 'Pescados y Mariscos' },
     { id: 2, name: 'Carnes' },
     { id: 3, name: 'Menestras' },
     { id: 4, name: 'Pastas' },
@@ -626,19 +617,28 @@ const HomeScreen = ({ route }) => {
         switch (mealType) {
           case 'Desayuno':
             setDataBreakfast(data || []);
+            setBreakfastLiked(false);
+            setBreakfastDisliked(false);
             //setDataBreakfastIngredients(data.ingredients);
             break;
           case 'Almuerzo':
             setDataLunch(data || []);
+            setLunchLiked(false);
+            setLunchDisliked(false);
+            
             //setDataLunchIngredients(data.ingredients);
             break;
           case 'Cena':
             setDataDinner(data || []);
+            setDinnerLiked(false);
+            setDinnerDisliked(false);
             //setDataDinnerIngredients(data.ingredients);
             break;
           default:
             break;
         }
+
+
 
         setData(data);
 
@@ -727,6 +727,21 @@ const HomeScreen = ({ route }) => {
     return `${hour}:${minutes}`;
   };
 
+
+  const getCurrentDateTime = () => {
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hour = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+
+    return `${year}-${month}-${day} ${hour}:${minutes}`;
+  };
+
+  // Ahora puedes obtener la fecha y hora actual combinadas
+  const currentDateTime = getCurrentDateTime();
+  console.log(currentDateTime);
 
 
 
@@ -1206,14 +1221,14 @@ const styles = StyleSheet.create({
 
   },
   likeButton: {
-    backgroundColor: 'rgba(210, 247, 193, 0.6)', 
+    backgroundColor: 'rgba(210, 247, 193, 0.6)',
     paddingHorizontal: 10,
     paddingVertical: 5,
     borderRadius: 5,
     marginRight: 10,
   },
   dislikeButton: {
-    backgroundColor: 'rgba(245, 213, 213, 1)', 
+    backgroundColor: 'rgba(245, 213, 213, 1)',
     paddingHorizontal: 10,
     paddingVertical: 5,
     borderRadius: 5,

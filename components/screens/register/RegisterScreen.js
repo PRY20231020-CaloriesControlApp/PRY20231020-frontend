@@ -27,10 +27,12 @@ const RegisterScreen = ({ navigation, onRegistrationComplete, handleLoginSuccess
     activity_factor: 2,
     caloric_reduction: 15,
     action: 'insert',
-    id_person: 0
+    id_person: 0,
+    security_question_answer: ''
   });
 
   const handleNextStep = () => {
+    console.log("**security_question_answer "+formData.security_question_answer)
     if (currentStep === totalSteps) {
       console.log('Registro completado');
       //setFormData (parseFloat(formData.weight))
