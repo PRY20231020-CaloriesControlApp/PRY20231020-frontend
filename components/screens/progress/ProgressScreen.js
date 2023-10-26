@@ -22,7 +22,7 @@ const ProgressScreen = ({ route, navigation }) => {
   console.log("progress_weight ",weights)
   const validWeights = weights.filter((progress_weight) => !isNaN(progress_weight) && progress_weight !== null && progress_weight !== undefined);
   console.log("validWeights ",validWeights)
-
+  console.log ("*****Peso: "+ dataPerson.weight)
   
   let weightLostText = 0;
   if (validWeights.length > 0) {
@@ -36,17 +36,17 @@ const ProgressScreen = ({ route, navigation }) => {
     console.log("oldestWeight",oldestWeight )
   
     console.log("latestWeight",latestWeight )
-
+    console.log ("Resta: ", oldestWeight - dataPerson.weight)
 
     let weightLost;
-    if (oldestWeight - latestWeight < 1) {
-      weightLost = (oldestWeight - latestWeight) * 1000; // Convierte a gramos
+    if (oldestWeight - dataPerson.weight < 1) {
+      weightLost = (oldestWeight - dataPerson.weight) * 1000; // Convierte a gramos
     } else {
-      weightLost = oldestWeight - latestWeight; // En kilogramos
+      weightLost = oldestWeight - dataPerson.weight; // En kilogramos
     }
-    if (weightLost < 1) {
+    if (oldestWeight - dataPerson.weight < 1) {
       // Mostrar en gramos
-      weightLostText = weightLost.toFixed(1) + ' g';
+      weightLostText = weightLost.toFixed(0) + ' g';
     } else {
       // Mostrar en kilogramos
       weightLostText = weightLost.toFixed(1) + ' kg';
