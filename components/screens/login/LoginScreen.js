@@ -276,8 +276,8 @@ const styles = StyleSheet.create({
     borderColor: '#FDA615',
     paddingLeft: 8,
     borderRadius: 8,
-    flexDirection: 'row', // Para alinear verticalmente el contenido
-    alignItems: 'center', // Centrar verticalmente el contenido
+    flexDirection: 'row', 
+    alignItems: 'center',
     width: '80%',
     marginLeft: 'auto',
     marginRight: 'auto',
