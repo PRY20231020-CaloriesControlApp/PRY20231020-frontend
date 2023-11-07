@@ -1,14 +1,41 @@
-# ProyectoApp
+# PRY20231020: Solución móvil para el control del consumo calórico de alimentos en personas con sobrepeso basado en la sugerencia de alimentos utilizando Machine Learning - Frontend
+
+Bienvenido al repositorio del frontend de PRY20231020, una innovadora solución móvil diseñada para abordar el problema del sobrepeso en Lima, Perú.
 
 ## Descripción
-ProyectoApp es una aplicación móvil desarrollada con React Native que tiene como objetivo proporcionar a los usuarios una plataforma para llevar un seguimiento de su progreso en diferentes áreas de su vida. La aplicación permite a los usuarios registrarse, iniciar sesión y acceder a funcionalidades específicas según su rol.
 
-## Características principales
-- Autenticación de usuarios: Los usuarios pueden registrarse e iniciar sesión en la aplicación utilizando su correo electrónico y contraseña.
-- Seguimiento de progreso: Los usuarios pueden llevar un seguimiento de su progreso en diferentes áreas, como salud, fitness, finanzas, entre otros.
-- Notificaciones: La aplicación envía notificaciones a los usuarios para recordarles registrar su progreso diariamente.
-- Perfil de usuario: Cada usuario tiene un perfil personalizado donde pueden ver y editar su información personal.
-- Interfaz intuitiva: La interfaz de usuario ha sido diseñada para ser intuitiva y fácil de usar, lo que permite a los usuarios navegar por la aplicación sin dificultades.
+La aplicación móvil se enfoca en el control del consumo calórico de alimentos en personas con sobrepeso. Su objetivo es proporcionar recomendaciones de alimentos basadas en cantidades recomendadas de calorías por persona. Esta herramienta busca promover hábitos alimentarios más saludables y contribuir a la reducción de los altos índices de sobrepeso en Lima, Perú.
 
-## Instalación
-1. Clona este repositorio en tu máquina local utilizando el siguiente comando:
+## Integrantes
+
+Este proyecto ha sido desarrollado por:
+
+- u201915358 - Huamani Tito, Kelly Rocio
+- u201817801 - Huaman La Cruz, Gerardo Francisco
+
+
+## Funcionalidades del Frontend
+
+Este frontend ha sido desarrollado utilizando React Native y Expo. Se compone de varias pantallas clave que permiten a los usuarios interactuar con la aplicación de manera efectiva.
+
+## Pantallas del Frontend
+
+El frontend consta de las siguientes pantallas:
+
+1. **Login**: Permite a los usuarios autenticarse y acceder a la plataforma de manera segura.
+
+2. **Home**: La pantalla principal de la aplicación, donde los usuarios pueden explorar y recibir recomendaciones calórica de alimentos.
+
+3. **Notification**: Administra las notificaciones y alertas para mantener a los usuarios informados sobre su progreso y recordatorios importantes.
+
+4. **Profile**: Permite a los usuarios acceder a su perfil personal y realizar ajustes de cuenta.
+
+5. **Progress**: Registra y rastrea el progreso de los usuarios en su viaje hacia un estilo de vida más saludable, proporcionando información valiosa sobre su éxito.
+
+6. **Register**: Permite a los usuarios registrarse en la plataforma, proporcionando información esencial para su perfil.
+
+7. **Intro**: La pantalla de introducción que se muestra al cargar la aplicación.
+
+Cada una de estas pantallas desempeña un papel crucial en la experiencia de los usuarios y en la efectividad de la aplicación.
+
+
