@@ -393,7 +393,7 @@ const HomeScreen = ({ route }) => {
   const lunchOptions = [
     { id: 1, name: 'Pescados y Mariscos' },
     { id: 2, name: 'Carnes' },
-    { id: 3, name: 'Menestras' },
+    { id: 3, name: 'Menestras y Guisos' },
     { id: 4, name: 'Pastas' },
     { id: 5, name: 'Arroces' },
     { id: 7, name: 'Pollos' },
